@@ -47,7 +47,8 @@ subroutine noahmp_driver_401(n, ttile, itimestep, &
                             bgap    , wgap    , tgb     , tgv     , chv     , chb     , & ! out Noah MP only
                             shg     , shc     , shb     , evg     , evb     , ghv     , & ! out Noah MP only
                             ghb     , irg     , irc     , irb     , tr      , evc     , & ! out Noah MP only
-                            chleaf  , chuc    , chv2    , chb2                          ) ! out Noah MP only
+                            chleaf  , chuc    , chv2    , chb2, sfcheadrt,&
+                            INFXSRT,soldrain) ! out Noah MP only
 
   use module_sf_noahmpdrv_401, only: noahmplsm_401
   use LIS_coreMod, only    : LIS_rc

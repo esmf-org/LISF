@@ -226,6 +226,9 @@ subroutine NoahMP401_main(n)
     real                 :: TWS_out                ! terrestrial water storage [mm]
     ! Code added by David Mocko 04/25/2019
     real                 :: startsm, startswe, startint, startgw, endsm
+    real                 :: tmp_sfcheadrt          ! extra output for WRF-HYDRO [m]
+    real                 :: tmp_infxs1rt          ! extra output for WRF-HYDRO [m]
+    real                 :: tmp_soldrain1rt          ! extra output for WRF-HYDRO [m]
 
     allocate( tmp_sldpth( NOAHMP401_struc(n)%nsoil ) )
     allocate( tmp_shdfac_monthly( 12 ) )
@@ -479,7 +482,11 @@ subroutine NoahMP401_main(n)
             startgw  = tmp_wa
 
             ! call model physics
-
+#ifdef WRF_HYDRO
+            tmp_sfcheadrt   = NoahMP401_struc(n)%noahmp401(t)%sfcheadrt
+            tmp_infxs1rt   = NoahMP401_struc(n)%noahmp401(t)%infxs1rt
+            tmp_soldrain1rt   = NoahMP401_struc(n)%noahmp401(t)%soldrain1rt
+#endif
             call noahmp_driver_401(n                     , & ! in    - nest id [-]
                                    tmp_ttile             , & ! in    - tile id [-]
                                    tmp_itimestep         , & ! in    - timestep number [-]
@@ -643,7 +650,11 @@ subroutine NoahMP401_main(n)
                                    tmp_chleaf            , & ! out   - leaf exchange coefficient [-]
                                    tmp_chuc              , & ! out   - under canopy exchange coefficient [-]
                                    tmp_chv2              , & ! out   - veg 2m exchange coefficient [-]
-                                   tmp_chb2              )   ! out   - bare 2m exchange coefficient [-]
+                                   tmp_chb2              , & ! out   - bare 2m exchange coefficient [-]
+                                   tmp_sfcheadrt         , & 
+                                   tmp_infxs1rt          , &
+                                   tmp_soldrain1rt    ) ! out   - extra output for WRF-HYDRO [m]
+            
 
             ! save state variables from local variables to global variables
             NOAHMP401_struc(n)%noahmp401(t)%sfcrunoff       = tmp_sfcrunoff
@@ -755,6 +766,9 @@ subroutine NoahMP401_main(n)
             NOAHMP401_struc(n)%noahmp401(t)%chuc      = tmp_chuc
             NOAHMP401_struc(n)%noahmp401(t)%chv2      = tmp_chv2
             NOAHMP401_struc(n)%noahmp401(t)%chb2      = tmp_chb2
+            NOAHMP401_struc(n)%noahmp401(t)%sfcheadrt = tmp_sfcheadrt
+            NOAHMP401_struc(n)%noahmp401(t)%infxs1rt  = tmp_infxs1rt
+            NOAHMP401_struc(n)%noahmp401(t)%soldrain1rt  = tmp_soldrain1rt
 
             ![ 1] output variable: tsk (unit=K  ). ***  surface radiative temperature
             call LIS_diagnoseSurfaceOutputVar(n, t, LIS_MOC_RADT, value = NOAHMP401_struc(n)%noahmp401(t)%tsk, &

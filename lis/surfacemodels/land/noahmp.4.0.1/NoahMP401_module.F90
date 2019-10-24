@@ -489,5 +489,9 @@ module NoahMP401_module
         real               :: chv2
         real               :: chb2
 
+	real               :: sfcheadrt
+	real               :: infxs1rt
+	real               :: soldrain1rt
+ 
     end type noahmp401dec
 end module NoahMP401_module
