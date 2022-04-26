@@ -246,6 +246,9 @@ module noah33_module
      real :: infxs1rt
      real :: soldrain1rt
 #endif
+#ifdef PARFLOW
+     real,allocatable :: wtrflx(:)
+#endif
   end type noah33dec
 
 end module noah33_module
