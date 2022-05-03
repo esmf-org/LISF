@@ -112,11 +112,13 @@ CAP_VERS      := VERSION
 CAP_OBJS      := LIS_NUOPC_Cap.o
 CAP_OBJS      += LIS_NUOPC_Gluecode.o
 CAP_OBJS      += LIS_NUOPC_DataCopy.o
+CAP_OBJS      += LIS_NUOPC_Flags.o
 CAP_OBJS      += LIS_ESMF_Extensions.o
 
 CAP_MODS      := lis_nuopc.mod
 CAP_MODS      += lis_nuopc_gluecode.mod
 CAP_MODS      += lis_nuopc_datacopy.mod
+CAP_MODS      += lis_nuopc_flags.mod
 CAP_MODS      += lis_esmf_extensions.mod
 
 CAP_FILES     := $(CAP_OBJS) $(CAP_MODS) $(CAP_LIB) $(CAP_VERS) $(CAP_MK)
@@ -189,15 +191,18 @@ nuopcinstall: $(CAP_LIB) $(CAP_MODS) $(CAP_VERS) \
 # Dependencies
 # ############
 
-LIS_NUOPC_Cap.o: LIS_NUOPC_Macros.h LIS_NUOPC_Gluecode.o \
-        LIS_ESMF_Extensions.o
-LIS_NUOPC_Gluecode.o: LIS_NUOPC_Macros.h LIS_NUOPC_DataCopy.o \
-        LIS_ESMF_Extensions.o $(MODEL_MODS)
-LIS_NUOPC_DataCopy.o: LIS_NUOPC_Macros.h $(MODEL_MODS)
+LIS_NUOPC_Cap.o: LIS_NUOPC_Macros.h LIS_NUOPC_Flags.o \
+        LIS_NUOPC_Gluecode.o LIS_ESMF_Extensions.o
+LIS_NUOPC_Gluecode.o: LIS_NUOPC_Macros.h LIS_NUOPC_Flags.o \
+        LIS_NUOPC_DataCopy.o LIS_ESMF_Extensions.o $(MODEL_MODS)
+LIS_NUOPC_DataCopy.o: LIS_NUOPC_Macros.h LIS_NUOPC_Flags.o \
+        $(MODEL_MODS)
+LIS_NUOPC_Flags.o: LIS_NUOPC_Macros.h
 
 lis_nuopc.mod: LIS_NUOPC_Cap.o
 lis_nuopc_gluecode.mod: LIS_NUOPC_Gluecode.o
 lis_nuopc_datacopy.mod: LIS_NUOPC_DataCopy.o
+lis_nuopc_flags.mod: LIS_NUOPC_Flags.o
 lis_esmf_extensions.mod: LIS_ESMF_Extensions.o
 
 # ###########
