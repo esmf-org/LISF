@@ -165,6 +165,7 @@ module LIS_NUOPC_Gluecode
     LIS_FORC_CO2
   use LIS_ESMF_Extensions
   use LIS_NUOPC_DataCopy
+  use LIS_NUOPC_Flags
 
   IMPLICIT NONE
 
@@ -679,10 +680,9 @@ contains
 ! !ROUTINE: LIS_NUOPC_DataInit
 !
 ! !INTERFACE:
-  subroutine LIS_NUOPC_DataInit(nest,importState,exportState,rc)
+  subroutine LIS_NUOPC_DataInit(nest,exportState,rc)
 ! !ARGUMENTS:
     integer,intent(in)                     :: nest
-    type(ESMF_State),intent(inout)         :: importState
     type(ESMF_State),intent(inout)         :: exportState
     integer,intent(out)                    :: rc
 
@@ -716,13 +716,15 @@ contains
 ! !ROUTINE: LIS_NUOPC_Run
 !
 ! !INTERFACE:
-  subroutine LIS_NUOPC_Run(nest,mode,importState,exportState,clock,rc)
+  subroutine LIS_NUOPC_Run(nest,mode,importState,exportState,clock, &
+  misg_import,rc)
 ! !ARGUMENTS:
     integer,intent(in)                     :: nest
     integer,intent(in)                     :: mode
     type(ESMF_State),intent(inout)         :: importState
     type(ESMF_State),intent(inout)         :: exportState
     type(ESMF_Clock),intent(in)            :: clock
+    type(missingval_flag),intent(in)       :: misg_import
     integer,intent(out)                    :: rc
 !
 ! !DESCRIPTION:
@@ -773,7 +775,7 @@ contains
     call LIS_timemgr_set(LIS_rc, yy, mm, dd, h, m, s, 0, 0.0)
 
     T_ENTER("datacopy")
-    call LIS_ImportFieldsCopy(nest,importState,rc=rc)
+    call LIS_ImportFieldsCopy(nest,importState,misg_import,rc=rc)
     T_EXIT("datacopy")
     if(ESMF_STDERRORCHECK(rc)) return ! bail out
 
@@ -1763,10 +1765,11 @@ contains
 #undef METHOD
 #define METHOD "LIS_ImportFieldsCopy"
 
-  subroutine LIS_ImportFieldsCopy(nest,importState,label,rc)
+  subroutine LIS_ImportFieldsCopy(nest,importState,missing,label,rc)
     ! ARGUMENTS
     integer,intent(in)                :: nest
     type(ESMF_State),intent(inout)    :: importState
+    type(missingval_flag),intent(in)  :: missing
     character(*),intent(in),optional  :: label
     integer,intent(out)               :: rc
     ! LOCAL VARIABLES
@@ -1808,7 +1811,7 @@ contains
             if (LIS_rc%lsm.eq."Noah.3.3") then
               call LIS_CopyToNoah_3_3(field=importField, &
                 stdName=LIS_FieldList(fIndex)%stdName, &
-                nest=nest,rc=rc)
+                nest=nest,missing=missing,rc=rc)
               if(ESMF_STDERRORCHECK(rc)) return ! bail out
             else if (LIS_rc%lsm.eq."NoahMP.3.6") then
               call LIS_CopyToNoahMP_3_6(field=importField, &
