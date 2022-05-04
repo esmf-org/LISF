@@ -398,6 +398,9 @@ contains
 #ifdef WRF_HYDRO
                    ,SFCHEADRT                                                  & ! IN/OUT :
 #endif
+#ifdef PARFLOW
+                   ,PCPDRP,ETRANI                                              & ! OUT :
+#endif
                    )
 
 ! --------------------------------------------------------------------------------------------------
@@ -454,6 +457,10 @@ contains
 
 #ifdef WRF_HYDRO
   REAL                           , INTENT(INOUT)    :: sfcheadrt
+#endif
+#ifdef PARFLOW
+  REAL                           , INTENT(OUT)    :: PCPDRP !precipitation drip (mm/s)
+  REAL, DIMENSION(       1:NSOIL), INTENT(OUT)    :: ETRANI !evapotranspiration from soil layers (mm/s)
 #endif
 
 ! input/output : need arbitary intial values
@@ -799,6 +806,9 @@ contains
 #ifdef WRF_HYDRO
                         ,sfcheadrt                     &
 #endif
+#ifdef PARFLOW
+                 ,ETRANI                                          & !out
+#endif
                  )  !out
 
 ! compute carbon budgets (carbon storages and co2 & bvoc fluxes)
@@ -861,6 +871,10 @@ contains
 ! David Mocko - Added RELSMC after Noah-3.X code
     RELSMC(:) = (SMC(:)               - parameters%SMCWLT(:)) /        &
                 (parameters%SMCMAX(:) - parameters%SMCWLT(:))
+
+#ifdef PARFLOW
+    PCPDRP = QTHROR + QMELT
+#endif
 
   END SUBROUTINE NOAHMP_SFLX
 
@@ -6343,6 +6357,9 @@ ENDIF   ! CROPTYPE == 0
 #ifdef WRF_HYDRO
                         ,sfcheadrt                     &
 #endif
+#ifdef PARFLOW
+                    ,ETRANI                                          & !out
+#endif
                     )  !out
 ! ----------------------------------------------------------------------  
 ! Code history:
@@ -6437,7 +6454,11 @@ ENDIF   ! CROPTYPE == 0
   REAL                                           :: QSDEW   !soil surface dew rate [mm/s]
   REAL                                           :: QSNFRO  !snow surface frost rate[mm/s]
   REAL                                           :: QSNSUB  !snow surface sublimation rate [mm/s]
+#ifdef PARFLOW
+  REAL, DIMENSION(       1:NSOIL), INTENT(OUT)   :: ETRANI  !evapotranspiration from soil layers (mm/s)
+#else
   REAL, DIMENSION(       1:NSOIL)                :: ETRANI  !transpiration rate (mm/s) [+]
+#endif
   REAL, DIMENSION(       1:NSOIL)                :: WCND   !hydraulic conductivity (m/s)
   REAL                                           :: QDRAIN  !soil-bottom free drainage [mm/s] 
   REAL                                           :: SNOFLOW !glacier flow [mm/s]
