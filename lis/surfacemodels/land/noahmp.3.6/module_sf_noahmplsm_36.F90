@@ -654,6 +654,9 @@ contains
 #ifdef WRF_HYDRO
                    ,SFCHEADRT                                                  & ! IN/OUT :
 #endif
+#ifdef PARFLOW
+                   ,PCPDRP,ETRANI                                              & ! OUT :
+#endif
                    )
 
 ! --------------------------------------------------------------------------------------------------
@@ -711,6 +714,12 @@ contains
 
 #ifdef WRF_HYDRO
   REAL                           , INTENT(INOUT)    :: sfcheadrt
+#endif
+
+#ifdef PARFLOW
+  REAL                           , INTENT(OUT)    :: PCPDRP !precipitation drip (mm/s)
+  REAL, DIMENSION(       1:NSOIL), INTENT(OUT)    :: ETRANI !evapotranspiration from soil layers (mm/s)
+  REAL                                            :: QTHROR !throughfall for rain (mm/s)
 #endif
 
 ! input/output : need arbitary intial values
@@ -1019,6 +1028,9 @@ contains
 #ifdef WRF_HYDRO
                         ,sfcheadrt                     &
 #endif
+#ifdef PARFLOW
+                 ,QTHROR,ETRANI                                   & !out
+#endif
                  )  !out
 
 !     write(*,'(a20,10F15.5)') 'SFLX:RUNOFF=',RUNSRF*DT,RUNSUB*DT,EDIR*DT
@@ -1062,6 +1074,9 @@ contains
     ELSE
       ALBEDO = -999.9
     END IF
+#ifdef PARFLOW
+    PCPDRP = QTHROR + QMELT
+#endif
     
 
   END SUBROUTINE NOAHMP_SFLX_36
@@ -6680,6 +6695,9 @@ END SUBROUTINE ALBEDO_UPD
 #ifdef WRF_HYDRO
                         ,sfcheadrt                     &
 #endif
+#ifdef PARFLOW
+                    ,QTHROR,ETRANI                                   & !out
+#endif
                     )  !out
 ! ----------------------------------------------------------------------  
 ! Code history:
@@ -6765,6 +6783,9 @@ END SUBROUTINE ALBEDO_UPD
   REAL                             , INTENT(IN)   :: fldfrc 
 
   INTEGER,                         INTENT(IN)    :: ISURBAN
+#ifdef PARFLOW
+  REAL,                            INTENT(OUT)   :: QTHROR
+#endif
 
 ! local
   INTEGER                                        :: IZ
@@ -6775,7 +6796,11 @@ END SUBROUTINE ALBEDO_UPD
   REAL                                           :: QSNFRO  !snow surface frost rate[mm/s]
   REAL                                           :: QSNSUB  !snow surface sublimation rate [mm/s]
   REAL                                           :: SNOWHIN !snow depth increasing rate (m/s)
+#ifdef PARFLOW
+  REAL, DIMENSION(       1:NSOIL), INTENT(OUT)   :: ETRANI  !evapotranspiration from soil layers (mm/s)
+#else
   REAL, DIMENSION(       1:NSOIL)                :: ETRANI  !transpiration rate (mm/s) [+]
+#endif
   REAL, DIMENSION(       1:NSOIL)                :: WCND   !hydraulic conductivity (m/s)
   REAL                                           :: QDRAIN  !soil-bottom free drainage [mm/s] 
   REAL                                           :: SNOFLOW !glacier flow [mm/s]
@@ -6803,7 +6828,11 @@ END SUBROUTINE ALBEDO_UPD
                   FROZEN_CANOPY,                                 & !in     
                   CANLIQ ,CANICE ,TV     ,                 & !inout
                   CMC    ,ECAN   ,ETRAN  ,QRAIN  ,QSNOW  , & !out
-                  SNOWHIN,FWET   ,FPICE   )                           !out
+                  SNOWHIN,FWET   ,FPICE                    & !out
+#ifdef PARFLOW
+                  ,QTHROR                                  & !out
+#endif
+                  )
 
 ! sublimation, frost, evaporation, and dew
 
@@ -6925,7 +6954,11 @@ END SUBROUTINE ALBEDO_UPD
                        FROZEN_CANOPY,                                 & !in      
                        CANLIQ ,CANICE ,TV     ,                 & !inout
                        CMC    ,ECAN   ,ETRAN  ,QRAIN  ,QSNOW  , & !out
-                       SNOWHIN,FWET   ,FPICE   )                           !out
+                       SNOWHIN,FWET   ,FPICE                    & !out
+#ifdef PARFLOW
+                       ,QTHROR                                  & !out
+#endif
+                       )
 
 ! ------------------------ code history ------------------------------
 ! canopy hydrology
@@ -6976,7 +7009,11 @@ END SUBROUTINE ALBEDO_UPD
   REAL                :: BDFALL  !bulk density of snowfall (kg/m3)
   REAL                :: QINTR   !interception rate for rain (mm/s)
   REAL                :: QDRIPR  !drip rate for rain (mm/s)
+#ifdef PARFLOW
+  REAL, INTENT(OUT)   :: QTHROR  !throughfall for rain (mm/s)
+#else
   REAL                :: QTHROR  !throughfall for rain (mm/s)
+#endif
   REAL                :: QINTS   !interception (loading) rate for snowfall (mm/s)
   REAL                :: QDRIPS  !drip (unloading) rate for intercepted snow (mm/s)
   REAL                :: QTHROS  !throughfall of snowfall (mm/s)

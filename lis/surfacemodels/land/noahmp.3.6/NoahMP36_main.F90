@@ -217,7 +217,12 @@ subroutine NoahMP36_main(n)
     ! Code added by Chandana Gangodagamage on 02/25/2019
     real                 :: tmp_infxs1rt           ! variable for LISHydro coupling [mm]
     real                 :: tmp_soldrain1rt        ! variable for LISHydro coupling [mm]
-    
+#ifdef PARFLOW
+    real                 :: tmp_pcpdrp             ! precipitation drip [kg m-2 s-1]
+    real,allocatable     :: tmp_etrani(:)          ! evapotranspiration from soil layers [mm s-1]
+    real,parameter       :: LVH2O = 2.501000E+6    ! Latent heat for evapo for water  
+#endif
+
     ! SY: Begin for enabling OPTUE
     ! SY: Begin corresponding to REDPRM
     ! SY: Begin SOIL PARAMETERS 
@@ -330,6 +335,9 @@ subroutine NoahMP36_main(n)
     allocate( tmp_zss( NOAHMP36_struc(n)%nsoil+NOAHMP36_struc(n)%nsnow) )
     allocate( tmp_snowice( NOAHMP36_struc(n)%nsnow ) )
     allocate( tmp_snowliq( NOAHMP36_struc(n)%nsnow ) )
+#ifdef PARFLOW
+    allocate( tmp_etrani( NOAHMP36_struc(n)%nsoil ) )
+#endif
     
     ! check NoahMP36 alarm. If alarm is ring, run model. 
     alarmCheck = LIS_isAlarmRinging(LIS_rc, "NoahMP36 model alarm")
@@ -610,6 +618,9 @@ subroutine NoahMP36_main(n)
 #ifdef WRF_HYDRO
             tmp_sfcheadrt   = NoahMP36_struc(n)%noahmp36(t)%sfcheadrt
 #endif
+#ifdef PARFLOW
+            tmp_etrani(:)   = 0
+#endif
             ! SY: End corresponding to read_mp_veg_parameters
             ! SY: End for enabling OPTUE: get calibratable parameters
             call noahmp_driver_36(LIS_localPet, t,tmp_landuse_tbl_name  , & ! in    - Noah model landuse parameter table [-]
@@ -831,7 +842,12 @@ subroutine NoahMP36_main(n)
                                   tmp_fldsto            , & ! in   - flood storage [m/s]
                                   tmp_fldfrc            , & ! in   - flood storage [m/s]
                                   
-                                  tmp_sfcheadrt         )   ! out   - extra output for WRF-HYDRO [m]
+                                  tmp_sfcheadrt           & ! out  - extra output for WRF-HYDRO [m]
+#ifdef PARFLOW
+                                  ,tmp_pcpdrp             & ! out  - precipitation drip [kg m-2 s-1]
+                                  ,tmp_etrani             & ! out  - evapotranspiration from soil layers [mm s-1]
+#endif
+                                  )
             
             !Added by Chandana Gangodagamage
             !obtain infiltration excess and soil drain from model physics 
@@ -942,7 +958,13 @@ subroutine NoahMP36_main(n)
             !Added by Chandana Gangodagamage
             NOAHMP36_struc(n)%noahmp36(t)%infxs1rt     = tmp_infxs1rt
             NOAHMP36_struc(n)%noahmp36(t)%soldrain1rt  = tmp_soldrain1rt
-
+#ifdef PARFLOW
+            NOAHMP36_struc(n)%noahmp36(t)%wtrflx(1)    = - tmp_pcpdrp &
+              - ((tmp_edir + tmp_etrani(1))/LVH2O)
+            do i=1, NOAHMP36_struc(n)%nsoil
+              NOAHMP36_struc(n)%noahmp36(t)%wtrflx(i)  = (tmp_etrani(i)/LVH2O)
+            enddo
+#endif
             ![ 1] output variable: soil_temp (unit=K). ***  soil layer temperature
             soil_temp(1:NOAHMP36_struc(n)%nsoil) = NOAHMP36_struc(n)%noahmp36(t)%sstc(NOAHMP36_struc(n)%nsnow+1 : NOAHMP36_struc(n)%nsoil+NOAHMP36_struc(n)%nsnow)
             do i=1, NOAHMP36_struc(n)%nsoil
@@ -1485,4 +1507,7 @@ subroutine NoahMP36_main(n)
     deallocate( tmp_zss )
     deallocate( tmp_snowice )
     deallocate( tmp_snowliq )
+#ifdef PARFLOW
+    deallocate( tmp_etrani )
+#endif
 end subroutine NoahMP36_main
