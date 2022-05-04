@@ -395,6 +395,11 @@ subroutine noahmp_driver_36(iloc, jloc, &
   sfcheadrt = 0.0 
 #endif
 
+#ifdef PARFLOW
+  pcpdrp = 0.0
+  etrani = 0.0
+#endif
+
   if (opt_sfc == 3) then
      stop "(opt_sfc == 3) and (opt_sfc == 4) are not for offline use"
   endif

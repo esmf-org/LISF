@@ -1821,7 +1821,7 @@ contains
             else if (LIS_rc%lsm.eq."Noah-MP.4.0.1") then
               call LIS_CopyToNoahMP_4_0_1(field=importField, &
                 stdName=LIS_FieldList(fIndex)%stdName, &
-                nest=nest,rc=rc)
+                nest=nest,missing=missing,rc=rc)
               if(ESMF_STDERRORCHECK(rc)) return ! bail out
             else
               call ESMF_LogSetError(ESMF_RC_NOT_IMPL, &
