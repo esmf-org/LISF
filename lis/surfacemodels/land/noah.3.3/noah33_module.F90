@@ -93,6 +93,8 @@ module noah33_module
 !   \item[relsmc]
 !    Volumetric relative soil moisture $(m^3/m^3)$
 !    (smc - smcwlt) / (porosity - smcwlt)
+!   \item[wtrflx]
+!    total water flux. unit: kg m-2 s-1
 !   \end{description}
 !
 ! !REVISION HISTORY:
