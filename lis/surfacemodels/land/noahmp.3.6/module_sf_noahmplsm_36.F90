@@ -159,6 +159,7 @@ use ESMF
   INTEGER :: OPT_BTR != 1    !(suggested 1)
 
 ! options for runoff and groundwater
+! 0 -> OFF ;
 ! 1 -> TOPMODEL with groundwater (Niu et al. 2007 JGR) ;
 ! 2 -> TOPMODEL with an equilibrium water table (Niu et al. 2005 JGR) ;
 ! 3 -> original surface and subsurface runoff (free drainage)
@@ -168,7 +169,7 @@ use ESMF
   INTEGER :: OPT_RUN != 1    !(suggested 1)
 
 ! options for surface layer drag coeff (CH & CM)
-! 1->M-O ; 2->original Noah (Chen97); 3->MYJ consistent; 4->YSU consistent. 
+! 0->OFF; 1->M-O ; 2->original Noah (Chen97); 3->MYJ consistent; 4->YSU consistent. 
 
   INTEGER :: OPT_SFC != 1    !(1 or 2 or 3 or 4)
 
@@ -6902,12 +6903,13 @@ END SUBROUTINE ALBEDO_UPD
        IF(WSLAKE >= WSLMAX) RUNSRF = QINSUR*1000.             !mm/s
        WSLAKE = WSLAKE + (QINSUR-QSEVA)*1000.*DT -RUNSRF*DT   !mm
     ELSE                                                      ! soil
-
-       CALL      SOILWATER (NSOIL  ,NSNOW  ,DT     ,ZSOIL  ,DZSNSO , & !in
+       IF(OPT_RUN /= 0) THEN
+         CALL    SOILWATER (NSOIL  ,NSNOW  ,DT     ,ZSOIL  ,DZSNSO , & !in
                             QINSUR ,QSEVA  ,ETRANI ,SICE   ,ILOC   , JLOC , & !in
                             SH2O   ,SMC    ,ZWT    ,VEGTYP ,ISURBAN, & !inout
                            SMCWTD, DEEPRECH                       , & !inout
                             RUNSRF ,QDRAIN ,RUNSUB ,WCND   ,FCRMAX )   !out
+       END IF
  
        IF(OPT_RUN == 1) THEN 
           CALL GROUNDWATER (NSNOW  ,NSOIL  ,DT     ,SICE   ,ZSOIL  , & !in

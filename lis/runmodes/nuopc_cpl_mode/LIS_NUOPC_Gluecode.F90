@@ -226,7 +226,7 @@ module LIS_NUOPC_Gluecode
     type(LIS_FieldHookup), allocatable :: hookup(:)
   end type
 
-  type(LIS_Field),dimension(82)  :: LIS_FieldList = (/ &
+  type(LIS_Field),dimension(83)  :: LIS_FieldList = (/ &
     LIS_Field(stdName='2m_air_temperature', &
       stateName='t2_f', &
       ampValue=1.d0, meanValue=0.d0, &
@@ -561,7 +561,11 @@ module LIS_NUOPC_Gluecode
    LIS_Field(stdName='total_water_flux_layer_4', &
       stateName='wtrflx4', &
       ampValue=1.d0, meanValue=0.d0, &
-      units='kg m-2 s-1',transferOffer='will provide')/)
+      units='kg m-2 s-1',transferOffer='will provide'), &
+   LIS_Field(stdName='ground_water_storage', &
+      stateName='wa', &
+      ampValue=1.d0, meanValue=0.d0, &
+      units='mm',transferOffer='will provide')/)
 
 !EOP
 
@@ -1727,6 +1731,15 @@ contains
           LIS_FieldList(fIndex)%adExport=.TRUE.
           LIS_FieldList(fIndex)%hookup(nIndex)%exportArray=>LISWRF_export(nIndex)%wtrflx4
           LIS_FieldList(fIndex)%hookup(nIndex)%exportArray_t=>LISWRF_export(nIndex)%wtrflx4_t
+        case ('ground_water_storage')              ! (?)
+!          if (allocated(#NOTAVAILABLE#%varname)) &
+!            LIS_FieldList(fIndex)%lisForcVarname=#NOTAVAILABLE#%varname(1)
+          LIS_FieldList(fIndex)%adImport = .TRUE.
+          LIS_FieldList(fIndex)%directConn = .TRUE.
+          LIS_FieldList(fIndex)%sharedMem = .TRUE.
+!          LIS_FieldList(fIndex)%adExport=.FALSE.
+!          LIS_FieldList(fIndex)%hookup(nIndex)%exportArray=>LISWRF_export(nIndex)%%#NOTAVAILABLE#
+!          LIS_FieldList(fIndex)%hookup(nIndex)%exportArray_t=>LISWRF_export(nIndex)%%#NOTAVAILABLE#_t
 #endif
 #ifdef GSM_EXTLND
         case ('accum_plant_transpiration')              ! (77)
