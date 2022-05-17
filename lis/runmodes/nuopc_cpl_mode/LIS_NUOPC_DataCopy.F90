@@ -1302,6 +1302,14 @@ contains
               NoahMP36_struc(nest)%noahmp36(tile)%sstc(NOAHMP36_struc(nest)%nsnow+4) = farray(col,row)
             endif
           enddo
+        case ('ground_water_storage')
+          do tile=1,LIS_rc%ntiles(nest)
+            col = LIS_domain(nest)%tile(tile)%col
+            row = LIS_domain(nest)%tile(tile)%row
+            if (farray(col,row) .ne. real(MISSINGVALUE,ESMF_KIND_FIELD)) then
+              NoahMP36_struc(nest)%noahmp36(tile)%wa = farray(col,row)
+            endif
+          enddo
 #ifdef WRF_HYDRO
         case ('surface_water_depth')
           do tile=1,LIS_rc%ntiles(nest)
@@ -1399,6 +1407,12 @@ contains
             col = LIS_domain(nest)%tile(tile)%col
             row = LIS_domain(nest)%tile(tile)%row
             NoahMP36_struc(nest)%noahmp36(tile)%sstc(NOAHMP36_struc(nest)%nsnow+4) = farray(col,row)
+          enddo
+        case ('ground_water_storage')
+          do tile=1,LIS_rc%ntiles(nest)
+            col = LIS_domain(nest)%tile(tile)%col
+            row = LIS_domain(nest)%tile(tile)%row
+            NoahMP36_struc(nest)%noahmp36(tile)%wa = farray(col,row)
           enddo
 #ifdef WRF_HYDRO
         case ('surface_water_depth')
@@ -1538,6 +1552,14 @@ contains
               Noahmp401_struc(nest)%noahmp401(tile)%tslb(4) = farray(col,row)
             endif
           enddo
+        case ('ground_water_storage')
+          do tile=1,LIS_rc%ntiles(nest)
+            col = LIS_domain(nest)%tile(tile)%col
+            row = LIS_domain(nest)%tile(tile)%row
+            if (farray(col,row) .ne. real(MISSINGVALUE,ESMF_KIND_FIELD)) then
+              Noahmp401_struc(nest)%noahmp401(tile)%wa = farray(col,row)
+            endif
+          enddo
 #ifdef WRF_HYDRO
         case ('surface_water_depth')
           do tile=1,LIS_rc%ntiles(nest)
@@ -1635,6 +1657,12 @@ contains
             col = LIS_domain(nest)%tile(tile)%col
             row = LIS_domain(nest)%tile(tile)%row
             Noahmp401_struc(nest)%noahmp401(tile)%tslb(4) = farray(col,row)
+          enddo
+        case ('ground_water_storage')
+          do tile=1,LIS_rc%ntiles(nest)
+            col = LIS_domain(nest)%tile(tile)%col
+            row = LIS_domain(nest)%tile(tile)%row
+            Noahmp401_struc(nest)%noahmp401(tile)%wa = farray(col,row)
           enddo
 #ifdef WRF_HYDRO
         case ('surface_water_depth')
@@ -2411,6 +2439,15 @@ contains
               NoahMP36_struc(nest)%noahmp36(tile)%sstc(NOAHMP36_struc(nest)%nsnow+4) = farray(col,row,ens)
             endif
           enddo
+        case ('ground_water_storage')
+          do tile=1,LIS_rc%ntiles(nest)
+            col = LIS_domain(nest)%tile(tile)%col
+            row = LIS_domain(nest)%tile(tile)%row
+            ens = LIS_domain(nest)%tile(tile)%ensem
+            if (farray(col,row,ens) .ne. real(MISSINGVALUE,ESMF_KIND_FIELD)) then
+              NoahMP36_struc(nest)%noahmp36(tile)%wa = farray(col,row,ens)
+            endif
+          enddo
 #ifdef WRF_HYDRO
         case ('surface_water_depth')
           do tile=1,LIS_rc%ntiles(nest)
@@ -2520,6 +2557,13 @@ contains
             row = LIS_domain(nest)%tile(tile)%row
             ens = LIS_domain(nest)%tile(tile)%ensem
             NoahMP36_struc(nest)%noahmp36(tile)%sstc(NOAHMP36_struc(nest)%nsnow+4) = farray(col,row,ens)
+          enddo
+        case ('ground_water_storage')
+          do tile=1,LIS_rc%ntiles(nest)
+            col = LIS_domain(nest)%tile(tile)%col
+            row = LIS_domain(nest)%tile(tile)%row
+            ens = LIS_domain(nest)%tile(tile)%ensem
+            NoahMP36_struc(nest)%noahmp36(tile)%wa = farray(col,row,ens)
           enddo
 #ifdef WRF_HYDRO
         case ('surface_water_depth')
@@ -2672,6 +2716,15 @@ contains
               Noahmp401_struc(nest)%noahmp401(tile)%tslb(4) = farray(col,row,ens)
             endif
           enddo
+        case ('ground_water_storage')
+          do tile=1,LIS_rc%ntiles(nest)
+            col = LIS_domain(nest)%tile(tile)%col
+            row = LIS_domain(nest)%tile(tile)%row
+            ens = LIS_domain(nest)%tile(tile)%ensem
+            if (farray(col,row,ens) .ne. real(MISSINGVALUE,ESMF_KIND_FIELD)) then
+              Noahmp401_struc(nest)%noahmp401(tile)%wa = farray(col,row,ens)
+            endif
+          enddo
 #ifdef WRF_HYDRO
         case ('surface_water_depth')
           do tile=1,LIS_rc%ntiles(nest)
@@ -2782,6 +2835,13 @@ contains
             row = LIS_domain(nest)%tile(tile)%row
             ens = LIS_domain(nest)%tile(tile)%ensem
             Noahmp401_struc(nest)%noahmp401(tile)%tslb(4) = farray(col,row,ens)
+          enddo
+        case ('ground_water_storage')
+          do tile=1,LIS_rc%ntiles(nest)
+            col = LIS_domain(nest)%tile(tile)%col
+            row = LIS_domain(nest)%tile(tile)%row
+            ens = LIS_domain(nest)%tile(tile)%ensem
+            Noahmp401_struc(nest)%noahmp401(tile)%wa = farray(col,row,ens)
           enddo
 #ifdef WRF_HYDRO
         case ('surface_water_depth')
