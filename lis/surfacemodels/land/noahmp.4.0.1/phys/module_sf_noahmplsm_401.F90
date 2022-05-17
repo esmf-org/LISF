@@ -89,6 +89,7 @@ MODULE MODULE_SF_NOAHMPLSM_401
                       !   3 -> SSiB (matric potential)
 
   INTEGER :: OPT_RUN  ! options for runoff and groundwater
+                      !   0 -> OFF (for external coupling);
                       ! **1 -> TOPMODEL with groundwater (Niu et al. 2007 JGR) ;
                       !   2 -> TOPMODEL with an equilibrium water table (Niu et al. 2005 JGR) ;
                       !   3 -> original surface and subsurface runoff (free drainage)
@@ -6560,12 +6561,13 @@ ENDIF   ! CROPTYPE == 0
        IF(WSLAKE >= WSLMAX) RUNSRF = QINSUR*1000.             !mm/s
        WSLAKE = WSLAKE + (QINSUR-QSEVA)*1000.*DT -RUNSRF*DT   !mm
     ELSE                                                      ! soil
-       CALL      SOILWATER (parameters,NSOIL  ,NSNOW  ,DT     ,ZSOIL  ,DZSNSO , & !in
+       IF(OPT_RUN /= 0) THEN
+         CALL    SOILWATER (parameters,NSOIL  ,NSNOW  ,DT     ,ZSOIL  ,DZSNSO , & !in
                             QINSUR ,QSEVA  ,ETRANI ,SICE   ,ILOC   , JLOC , & !in
                             SH2O   ,SMC    ,ZWT    ,VEGTYP , & !inout
                            SMCWTD, DEEPRECH                       , & !inout
                             RUNSRF ,QDRAIN ,RUNSUB ,WCND   ,FCRMAX )   !out
- 
+       ENDIF
        IF(OPT_RUN == 1) THEN 
           CALL GROUNDWATER (parameters,NSNOW  ,NSOIL  ,DT     ,SICE   ,ZSOIL  , & !in
                             STC    ,WCND   ,FCRMAX ,ILOC   ,JLOC   , & !in
@@ -9769,7 +9771,7 @@ END SUBROUTINE EMERG
   INTEGER,  INTENT(IN) :: idveg     !dynamic vegetation (1 -> off ; 2 -> on) with opt_crs = 1
   INTEGER,  INTENT(IN) :: iopt_crs  !canopy stomatal resistance (1-> Ball-Berry; 2->Jarvis)
   INTEGER,  INTENT(IN) :: iopt_btr  !soil moisture factor for stomatal resistance (1-> Noah; 2-> CLM; 3-> SSiB)
-  INTEGER,  INTENT(IN) :: iopt_run  !runoff and groundwater (1->SIMGM; 2->SIMTOP; 3->Schaake96; 4->BATS)
+  INTEGER,  INTENT(IN) :: iopt_run  !runoff and groundwater (0->OFF; 1->SIMGM; 2->SIMTOP; 3->Schaake96; 4->BATS)
   INTEGER,  INTENT(IN) :: iopt_sfc  !surface layer drag coeff (CH & CM) (1->M-O; 2->Chen97)
   INTEGER,  INTENT(IN) :: iopt_frz  !supercooled liquid water (1-> NY06; 2->Koren99)
   INTEGER,  INTENT(IN) :: iopt_inf  !frozen soil permeability (1-> NY06; 2->Koren99)
