@@ -261,7 +261,8 @@ module LIS_NUOPC
     logical               :: realizeAllExport = .FALSE.
     logical               :: nestToNest       = .FALSE.
     logical               :: cplEns           = .FALSE.
-    logical               :: importDependency = .FALSE.
+    type(field_init_flag) :: init_export      = FLD_INIT_MISSING
+    type(field_init_flag) :: init_import      = FLD_INIT_MISSING
     type(missingval_flag) :: misg_import      = MISSINGVAL_FAIL
     character(len=40)     :: dirOutput        = "."
     integer               :: nnests           = 0
@@ -430,6 +431,7 @@ module LIS_NUOPC
       call ESMF_AttributeGet(gcomp, name="realize_all_export", value=value, &
         defaultValue="false", convention="NUOPC", purpose="Instance", rc=rc)
       if (ESMF_STDERRORCHECK(rc)) return  ! bail out
+      value = ESMF_UtilStringLowerCase(value, rc=rc)
       is%wrap%realizeAllExport = (trim(value)=="true")
 
       ! Set configuration file name
@@ -442,20 +444,37 @@ module LIS_NUOPC
       call ESMF_AttributeGet(gcomp, name="nest_to_nest", value=value, &
         defaultValue="false", convention="NUOPC", purpose="Instance", rc=rc)
       if (ESMF_STDERRORCHECK(rc)) return  ! bail out
+      value = ESMF_UtilStringLowerCase(value, rc=rc)
       is%wrap%nestToNest = (trim(value)=="true")
 
       ! Turn on ensemble coupling
       call ESMF_AttributeGet(gcomp, name="coupled_ensemble", value=value, &
         defaultValue="false", convention="NUOPC", purpose="Instance", rc=rc)
       if (ESMF_STDERRORCHECK(rc)) return  ! bail out
+      value = ESMF_UtilStringLowerCase(value, rc=rc)
       is%wrap%cplEns = (trim(value)=="true")
 
-      ! Realize all export fields
+      ! export data initialization type
+      call ESMF_AttributeGet(gcomp, name="initialize_export", &
+        value=value, defaultValue="FLD_INIT_MISSING", &
+        convention="NUOPC", purpose="Instance", rc=rc)
+      if (ESMF_STDERRORCHECK(rc)) return  ! bail out
+      is%wrap%init_export = value
+
+      ! Initialize import setting
+      call ESMF_AttributeGet(gcomp, name="initialize_import", &
+        value=value, defaultValue="FLD_INIT_MISSING", &
+        convention="NUOPC", purpose="Instance", rc=rc)
+      if (ESMF_STDERRORCHECK(rc)) return  ! bail out
+      is%wrap%init_import = value
+
+      ! Import dependency
       call ESMF_AttributeGet(gcomp, name="import_dependency", &
         value=value, defaultValue="false", &
         convention="NUOPC", purpose="Instance", rc=rc)
       if (ESMF_STDERRORCHECK(rc)) return  ! bail out
-      is%wrap%importDependency = (trim(value)=="true")
+      value = ESMF_UtilStringLowerCase(value, rc=rc)
+      if (trim(value)=="true") is%wrap%init_import = FLD_INIT_IMPORT
 
       ! Missing import value option
       call ESMF_AttributeGet(gcomp, name="missing_import", &
@@ -485,8 +504,13 @@ module LIS_NUOPC
         write (logMsg, "(A,(A,L1))") trim(cname)//': ', &
           'Coupled Ensemble       = ',is%wrap%cplEns
         call ESMF_LogWrite(trim(logMsg),ESMF_LOGMSG_INFO)
-        write (logMsg, "(A,(A,L1))") trim(cname)//': ', &
-          'Import Dependency      = ',is%wrap%importDependency
+        value = is%wrap%init_export
+        write (logMsg, "(A,(A,A))") trim(cname)//': ', &
+          'Initialize Export      = ',trim(value)
+        call ESMF_LogWrite(trim(logMsg),ESMF_LOGMSG_INFO)
+        value = is%wrap%init_import
+        write (logMsg, "(A,(A,A))") trim(cname)//': ', &
+          'Initialize Import      = ',trim(value)
         call ESMF_LogWrite(trim(logMsg),ESMF_LOGMSG_INFO)
         value = is%wrap%misg_import
         write (logMsg, "(A,(A,A))") trim(cname)//': ', &
@@ -911,6 +935,23 @@ module LIS_NUOPC
         endif
       enddo
 
+      if(is%wrap%init_export .eq. FLD_INIT_MISSING) then
+        call LIS_ESMF_FillState(is%wrap%NStateExp(nIndex), MISSINGVALUE, &
+          rc=rc)
+        if (ESMF_STDERRORCHECK(rc)) return
+      elseif(is%wrap%init_export .eq. FLD_INIT_ZERO) then
+        call LIS_ESMF_FillState(is%wrap%NStateExp(nIndex), 0.0_ESMF_KIND_R8, &
+          rc=rc)
+        if (ESMF_STDERRORCHECK(rc)) return
+      elseif(is%wrap%init_export .eq. FLD_INIT_SKIP) then
+        ! do nothing
+      else
+        call ESMF_LogSetError(ESMF_FAILURE, &
+          msg="Invalid export initialization option.", &
+          line=__LINE__,file=__FILE__,rcToReturn=rc)
+        return  ! bail out
+      endif
+
       is%wrap%modes(nIndex) = LIS_RunModeGet(LIS_FieldList,is%wrap%NStateImp(nIndex),rc=rc)
       if (ESMF_STDERRORCHECK(rc)) return  ! bail out
 
@@ -1073,7 +1114,7 @@ module LIS_NUOPC
         file=__FILE__)) &
         return  ! bail out
 
-      if (is%wrap%importDependency) then
+      if (is%wrap%init_import .eq. FLD_INIT_IMPORT) then
         ! Check data dependencies
         importCurrent = NUOPC_IsAtTime(is%wrap%NStateImp(nIndex), &
           time=currTime, rc=rc)
@@ -1124,9 +1165,22 @@ module LIS_NUOPC
               call ESMF_FieldCopy(ifield, fieldIn=efield, rc=rc)
               if (ESMF_STDERRORCHECK(rc)) return
             else
-              call ESMF_FieldFill(ifield, dataFillScheme="const", &
-                const1=MISSINGVALUE, rc=rc)
-              if (ESMF_STDERRORCHECK(rc)) return
+              if (is%wrap%init_import .eq. FLD_INIT_ZERO) then
+                call ESMF_FieldFill(ifield, dataFillScheme="const", &
+                  const1=0.0_ESMF_KIND_R8, rc=rc)
+                if (ESMF_STDERRORCHECK(rc)) return
+              elseif (is%wrap%init_import .eq. FLD_INIT_MISSING) then
+                call ESMF_FieldFill(ifield, dataFillScheme="const", &
+                  const1=MISSINGVALUE, rc=rc)
+                if (ESMF_STDERRORCHECK(rc)) return
+              elseif (is%wrap%init_import .eq. FLD_INIT_SKIP) then
+                ! do nothing
+              else
+                call ESMF_LogSetError(ESMF_FAILURE, &
+                  msg="Invalid import initialization option.", &
+                  line=__LINE__,file=__FILE__,rcToReturn=rc)
+                return  ! bail out
+              endif
             endif
           endif
         enddo
