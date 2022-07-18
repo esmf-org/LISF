@@ -887,7 +887,7 @@ subroutine NoahMP401_main(n)
 #ifdef PARFLOW
             NOAHMP401_struc(n)%noahmp401(t)%wtrflx(1)    = - tmp_pcpdrp &
               - ((tmp_edir + tmp_etrani(1))/LVH2O)
-            do i=1, NOAHMP401_struc(n)%nsoil
+            do i=2, NOAHMP401_struc(n)%nsoil
               NOAHMP401_struc(n)%noahmp401(t)%wtrflx(i)  = (tmp_etrani(i)/LVH2O)
             enddo
 #endif
