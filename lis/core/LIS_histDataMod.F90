@@ -486,6 +486,9 @@ module LIS_histDataMod
   public ::   LIS_MOC_SNOWSURFACEQ
   !public ::   LIS_MOC_SNOWWIND_DIR
 
+  public ::   LIS_MOC_PCPDRP
+  public ::   LIS_MOC_ETRANI
+
   integer :: LIS_MOC_SNOW_SOOT = -9999
   integer :: LIS_MOC_GRND_SNOW = -9999
   integer :: LIS_MOC_SURFT_SNOW = -9999
@@ -971,6 +974,8 @@ module LIS_histDataMod
     integer :: LIS_MOC_SNOWDELTAHEAT = -9999
     integer :: LIS_MOC_SNOWSURFACEQ = -9999
 
+    integer :: LIS_MOC_PCPDRP = -9999
+    integer :: LIS_MOC_ETRANI = -9999
 
 #if 0
    ! SPECIAL CASE INDICES
@@ -2122,6 +2127,33 @@ contains
             LIS_histData(n)%head_lsm_list,&
             n,2,ntiles,(/"m3    ", "kg/m2s"/),2,&
             (/"UP","DN"/),2,1,1,&
+            model_patch=.true.)
+    endif
+
+    call ESMF_ConfigFindLabel(modelSpecConfig,"PCPDRP:",rc=rc)
+    call get_moc_attributes(modelSpecConfig, LIS_histData(n)%head_lsm_list, &
+         "PCPDRP",&
+         "Water_Input_Soil",&
+         "Water input on soil surface",rc)
+    if ( rc == 1 ) then
+       call register_dataEntry(LIS_MOC_LSM_COUNT,LIS_MOC_PCPDRP,&
+            LIS_histData(n)%head_lsm_list,&
+            n,2,ntiles,(/"kg/m2s","kg/m2 "/),&
+            2,(/"UP","DN"/),2,1,1,&
+            model_patch=.true.)
+    endif
+
+
+    call ESMF_ConfigFindLabel(modelSpecConfig,"ETRANI:",rc=rc)
+    call get_moc_attributes(modelSpecConfig, LIS_histData(n)%head_lsm_list, &
+         "ETRANI",&
+         "Transpiration_Rate_Soil",&
+         "Transpiration Rate_Soil",rc)
+    if ( rc == 1 ) then
+       call register_dataEntry(LIS_MOC_LSM_COUNT,LIS_MOC_ETRANI,&
+            LIS_histData(n)%head_lsm_list,&
+            n,3,ntiles,(/"kg/m2s","mm/hr ","W/m2  "/),&
+            2,(/"UP","DN"/),2,1,1,&
             model_patch=.true.)
     endif
 
