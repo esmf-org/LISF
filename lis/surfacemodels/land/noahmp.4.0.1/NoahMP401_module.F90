@@ -521,6 +521,8 @@ module NoahMP401_module
 	real               :: soldrain1rt
 #ifdef PARFLOW
         real, pointer      :: wtrflx(:)
+        real, pointer      :: etrani(:)
+        real               :: pcpdrp
 #endif
  
     end type noahmp401dec

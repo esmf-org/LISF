@@ -460,7 +460,8 @@ contains
   REAL                           , INTENT(INOUT)    :: sfcheadrt
 #endif
 #ifdef PARFLOW
-  REAL                           , INTENT(OUT)    :: PCPDRP !precipitation drip (mm/s)
+  REAL                           , INTENT(OUT)    :: PCPDRP !water input on soil surface (mm/s)
+  REAL                                            :: QINSUR !water input on soil surface (mm/s)
   REAL, DIMENSION(       1:NSOIL), INTENT(OUT)    :: ETRANI !evapotranspiration from soil layers (mm/s)
 #endif
 
@@ -808,7 +809,8 @@ contains
                         ,sfcheadrt                     &
 #endif
 #ifdef PARFLOW
-                 ,ETRANI                                          & !out
+                 ,QINSUR,ETRANI                                          & !out
+
 #endif
                  )  !out
 
@@ -874,7 +876,7 @@ contains
                 (parameters%SMCMAX(:) - parameters%SMCWLT(:))
 
 #ifdef PARFLOW
-    PCPDRP = QTHROR + QMELT
+        PCPDRP = QINSUR !*1000.0  !--> conversion from m to mm QTHROR + QMELT
 #endif
 
   END SUBROUTINE NOAHMP_SFLX
@@ -6359,7 +6361,7 @@ ENDIF   ! CROPTYPE == 0
                         ,sfcheadrt                     &
 #endif
 #ifdef PARFLOW
-                    ,ETRANI                                          & !out
+                    ,QINSUR,ETRANI                                          & !out
 #endif
                     )  !out
 ! ----------------------------------------------------------------------  
@@ -6547,6 +6549,13 @@ ENDIF   ! CROPTYPE == 0
 
 #ifdef WRF_HYDRO
        QINSUR = QINSUR+sfcheadrt/DT*0.001  !sfcheadrt units (m)
+#endif
+
+#ifdef PARFLOW
+       QINSUR = QINSUR*1000.0  !--> conversion from m to mm 
+        DO IZ = 1, parameters%NROOT
+               ETRANI(IZ) = ETRANI(IZ)*1000.0
+        ENDDO
 #endif
 
        !ag (05Jan2021)

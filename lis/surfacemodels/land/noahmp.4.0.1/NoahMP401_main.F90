@@ -244,7 +244,7 @@ subroutine NoahMP401_main(n)
     real                 :: tmp_infxs1rt           ! extra output for WRF-HYDRO [m]
     real                 :: tmp_soldrain1rt        ! extra output for WRF-HYDRO [m]
 #ifdef PARFLOW
-    real                 :: tmp_pcpdrp             ! precipitation drip [kg m-2 s-1]
+    real                 :: tmp_pcpdrp             ! water input on soil surface [m/s]
     real,allocatable     :: tmp_etrani(:)          ! evapotranspiration from soil layers [mm s-1]
 #endif
 
@@ -542,7 +542,8 @@ subroutine NoahMP401_main(n)
             tmp_pgs             = NOAHMP401_struc(n)%noahmp401(t)%pgs
             tmp_sfcheadrt       = NoahMP401_struc(n)%noahmp401(t)%sfcheadrt
 #ifdef PARFLOW
-            tmp_etrani(:)       = 0
+            tmp_etrani(:)       = NOAHMP401_struc(n)%noahmp401(t)%etrani(:)
+            tmp_pcpdrp          = NOAHMP401_struc(n)%noahmp401(t)%pcpdrp
 #endif
 
 ! Calculate water storages at start of timestep
@@ -1141,6 +1142,18 @@ subroutine NoahMP401_main(n)
             ![ 57] output variable: etran (unit=mm/s ). ***  transpiration rate
             call LIS_diagnoseSurfaceOutputVar(n, t, LIS_MOC_TVEG, value = NOAHMP401_struc(n)%noahmp401(t)%etran, &
                                               vlevel=1, unit="kg m-2 s-1", direction="UP", surface_type = LIS_rc%lsm_index)
+
+#ifdef PARFLOW
+            ![ 57a] output variable: etrani (unit=mm/s ). ***  evapotranspiration from soil layers
+            do i=1, NOAHMP401_struc(n)%nsoil
+                call LIS_diagnoseSurfaceOutputVar(n, t, LIS_MOC_ETRANI, value = NOAHMP401_struc(n)%noahmp401(t)%etrani(i), &
+                                              vlevel=i, unit="kg m-2 s-1", direction="UP", surface_type = LIS_rc%lsm_index)
+            end do
+
+            ![ 57b] output variable: pcpdrp (unit=m/s ). ***  water input on soil surface
+            call LIS_diagnoseSurfaceOutputVar(n, t, LIS_MOC_PCPDRP, value = NOAHMP401_struc(n)%noahmp401(t)%pcpdrp, &
+                                              vlevel=1, unit="kg m-2 s-1", direction="DN", surface_type = LIS_rc%lsm_index)
+#endif
 
             ![ 58] output variable: fsa (unit=W/m2). ***  total absorbed solar radiation
             call LIS_diagnoseSurfaceOutputVar(n, t, LIS_MOC_SWNET, value = NOAHMP401_struc(n)%noahmp401(t)%fsa, &
