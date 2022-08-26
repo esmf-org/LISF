@@ -215,6 +215,7 @@ contains
           endif
        enddo
        flush(LIS_logunit)
+       if (.NOT. LIS_rc%offline) exit
     enddo
   end subroutine lis_run_retrospective
 

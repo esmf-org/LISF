@@ -240,6 +240,9 @@ subroutine LIS_lsmcpl_plugin
     call registerlsmcplsetexport(trim(LIS_noahmp401Id)//"+"//&
                                  trim(LIS_retroId)//char(0), &
                                  noahMP401_setwrfexport)
+    call registerlsmcplsetexport(trim(LIS_noahmp401Id)//"+"//&
+                                 trim(LIS_smootherDAId)//char(0), &
+                                 noahMP401_setwrfexport)
 #endif
 
 #if ( defined SM_NOAH_3_6 )

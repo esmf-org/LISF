@@ -23,6 +23,8 @@ module LIS_PRIV_rcMod
 !
 !  The variables specified in this module include: 
 !  \begin{description}
+!  \item[offline]
+!   uses offline driver
 !  \item[runmode]
 !   choice of running mode in LIS 
 !  \item[nnest]
@@ -621,6 +623,7 @@ module LIS_PRIV_rcMod
   use LIS_constantsMod, only : LIS_CONST_PATH_LEN
   implicit none
   type lisrcdec
+     logical                :: offline
      character*50           :: runmode 
      integer                :: nnest 
     

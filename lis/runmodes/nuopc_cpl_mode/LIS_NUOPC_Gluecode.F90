@@ -635,31 +635,12 @@ contains
 
     if(.not.LIS_initialized) then
        if (present(configFile)) LIS_rc%lis_config_file = trim(configFile)
-       call LIS_config_init(vm=vm) ! "retrospective"
-       call LIS_domain_init
-       call LIS_createTmnUpdate
-       call LIS_param_init
-       call LIS_perturb_init
-       call LIS_surfaceModel_init
-
-       LIS_rc%met_nf(:) = 9 ! WRFout sets to 17
-
-       call LIS_metforcing_init            ! "retrospective"
-       call LIS_irrigation_init
-       call LIS_initDAObservations
-       call LIS_routing_init
-       call LIS_routing_readrestart
-       call LIS_dataassim_init
-       call LIS_surfaceModel_setup
-       call LIS_surfaceModel_readrestart
-       call LIS_perturb_readrestart
-       call LIS_perturb_readrestart
-       call LIS_RTM_init
-       call LIS_appModel_init
+       call LIS_config_init(vm=vm)
+       LIS_rc%offline = .false.
+       call lisinit(trim(LIS_rc%runmode)//char(0))
 
        call LISWRF_alloc_states
        call LISWRF_reset_states
-       call LIS_core_init
 
        call LIS_HookupInit(rc)
        if(ESMF_STDERRORCHECK(rc)) return ! bail out
@@ -773,7 +754,8 @@ contains
     stopTime = currTime + timeStep
 
     ! Confirm if the timemgr should receive current time or stop time
-    call ESMF_TimeGet(stopTime, yy=yy, mm=mm, dd=dd, h=h, m=m, s=s, rc=rc)
+!    call ESMF_TimeGet(stopTime, yy=yy, mm=mm, dd=dd, h=h, m=m, s=s, rc=rc)
+    call ESMF_TimeGet(currTime, yy=yy, mm=mm, dd=dd, h=h, m=m, s=s, rc=rc)
     if(ESMF_STDERRORCHECK(rc)) return ! bail out
 
     call LIS_timemgr_set(LIS_rc, yy, mm, dd, h, m, s, 0, 0.0)
@@ -783,105 +765,8 @@ contains
     T_EXIT("datacopy")
     if(ESMF_STDERRORCHECK(rc)) return ! bail out
 
-    T_ENTER("dynparms")
-    call LIS_setDynparams(nest)
-    T_EXIT("dynparms")
-
-    select case (mode)
-      case (LIS_Offline)
-        ! Read in data from Met forcing sources listed in lis.config
-        T_ENTER("getmetforc")
-        call LIS_get_met_forcing(nest)
-        T_EXIT("getmetforc")
-      case (LIS_Coupled)
-        ! No extra work needs to be done
-      case (LIS_Hybrid)
-        call ESMF_LogSetError(ESMF_RC_ARG_BAD, &
-          msg="Mixed (coupled+offline) met forcing data is not allowed.", &
-          line=__LINE__, file=FILENAME, rcToReturn=rc)
-        return  ! bail out
-      case default
-        call ESMF_LogSetError(ESMF_RC_ARG_BAD, &
-          msg="Running mode is unknown.", &
-          line=__LINE__, file=FILENAME, rcToReturn=rc)
-        return  ! bail out
-    end select
-
-    T_ENTER("pertforc")
-    call LIS_perturb_forcing(nest)
-    T_EXIT("pertforc")
-
-    T_ENTER("irrrun")
-    call LIS_irrigation_run(nest)
-    T_EXIT("irrrun")
-
-    T_ENTER("f2t")
-    call LIS_surfaceModel_f2t(nest)
-    T_EXIT("f2t")
-
-    T_ENTER("smrun")
-    call LIS_surfaceModel_run(nest)
-    T_EXIT("smrun")
-
-    T_ENTER("smpert")
-    call LIS_surfaceModel_perturb_states(nest)
-    T_EXIT("smpert")
-
-    T_ENTER("daread")
-    call LIS_readDAobservations(nest)
-    T_EXIT("daread")
-
-    T_ENTER("pertda")
-    call LIS_perturb_DAobservations(nest)
-    T_EXIT("pertda")
-
-    T_ENTER("pertrest")
-    call LIS_perturb_writerestart(nest)
-    T_EXIT("pertrest")
-
-    T_ENTER("darun")
-    call LIS_dataassim_run(nest)
-    T_EXIT("darun")
-
-    T_ENTER("daout")
-    call LIS_dataassim_output(nest)
-    T_EXIT("daout")
-
-    T_ENTER("smout")
-    call LIS_surfaceModel_output(nest)
-    T_EXIT("smout")
-
-    T_ENTER("smrest")
-    call LIS_surfaceModel_writerestart(nest)
-    T_EXIT("smrest")
-
-    T_ENTER("rtrun")
-    call LIS_routing_run(nest)
-    T_EXIT("rtrun")
-
-    T_ENTER("rtout")
-    call LIS_routing_writeoutput(nest)
-    T_EXIT("rtout")
-
-    T_ENTER("rtrest")
-    call LIS_routing_writerestart(nest)
-    T_EXIT("rtrest")
-
-    T_ENTER("rtmrun")
-    call LIS_RTM_run(nest)
-    T_EXIT("rtmrun")
-
-    T_ENTER("rtmout")
-    call LIS_RTM_output(nest)
-    T_EXIT("rtmout")
-
-    T_ENTER("apprun")
-    call LIS_runAppModel(nest)
-    T_EXIT("apprun")
-
-    T_ENTER("appout")
-    call LIS_outputAppModel(nest)
-    T_EXIT("appout")
+    ! TBD new mode for no met forcings
+    call lisrun(trim(LIS_rc%runmode)//char(0))
 
     ! =========================================================
     ! Write LIS output data to export state
@@ -1004,6 +889,8 @@ contains
     call LIS_timemgr_set(LIS_rc, yy, mm, dd, h, m, s, 0, 0.0)
 
     LIS_rc%endtime = 1
+
+    call lisfinalize(trim(LIS_rc%runmode)//char(0))
 
 #ifdef DEBUG
     call ESMF_LogWrite(MODNAME//": leaving "//METHOD, ESMF_LOGMSG_INFO)
@@ -2546,6 +2433,8 @@ contains
       LIS_RunModeGet = LIS_Offline
     elseif ( connectedCount == reqCount ) then
       LIS_RunModeGet = LIS_Coupled
+      LIS_rc%metforc_blend_alg = "overlay"
+      LIS_rc%metforc(:) = "none"
     else
       LIS_RunModeGet = LIS_Hybrid
     endif
@@ -2684,6 +2573,9 @@ contains
           mIndex,"): ",trim(LIS_rc%metforc(mIndex))
         call ESMF_LogWrite(trim(logMsg), ESMF_LOGMSG_INFO)
       enddo
+      write (logMsg,"(A,A,A)") trim(l_label), &
+        " Met forcing blending: ", trim(LIS_rc%metforc_blend_alg)
+      call ESMF_LogWrite(trim(logMsg), ESMF_LOGMSG_INFO)
     endif
 
     do nIndex=1,LIS_rc%nnest

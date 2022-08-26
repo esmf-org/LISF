@@ -398,6 +398,7 @@ contains
     LIS_rc%use_twelve = .false.
     LIS_rc%reset_flag = .false.
     LIS_rc%run_model  = .true.
+    LIS_rc%offline    = .true.
 
   end subroutine lisconfig_generic
 
@@ -885,13 +886,14 @@ contains
     deallocate(LIS_patch_deltas)
     if ( fin_esmf ) then
        call ESMF_Finalize(endflag=ESMF_END_KEEPMPI, rc=ierr)
-    endif
 #if ( defined COUPLED)
 #else
 #if ( defined SPMD )
-    call MPI_FINALIZE(ierr)
+       call MPI_FINALIZE(ierr)
 #endif
 #endif
+    endif
+
   end subroutine spmd_finalize
 
 !BOP
