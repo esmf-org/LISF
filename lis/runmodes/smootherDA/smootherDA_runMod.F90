@@ -134,8 +134,8 @@ contains
 
     LIS_rc%DAincrMode(:) = 0 
     
-    call LIS_surfaceModel_readrestart
-    do while (.NOT. LIS_endofrun())
+!    call LIS_surfaceModel_readrestart
+o:  do while (.NOT. LIS_endofrun())
        do while(.NOT.LIS_endofTimeWindow())
           call LIS_ticktime
           do n=1,LIS_rc%nnest
@@ -163,6 +163,7 @@ contains
              endif
           enddo
           flush(LIS_logunit)
+          if (.NOT. LIS_rc%offline) exit o
        enddo
 
        if(LIS_rc%endtime.ne.1) then 
@@ -175,7 +176,7 @@ contains
 
           LIS_rc%iterationId(:) = LIS_rc%iterationId(:) + 1
        endif
-    enddo
+    enddo o
 
   end subroutine lis_run_smootherDA
 
