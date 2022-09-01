@@ -959,10 +959,10 @@ subroutine NoahMP36_main(n)
             NOAHMP36_struc(n)%noahmp36(t)%infxs1rt     = tmp_infxs1rt
             NOAHMP36_struc(n)%noahmp36(t)%soldrain1rt  = tmp_soldrain1rt
 #ifdef PARFLOW
-            NOAHMP36_struc(n)%noahmp36(t)%wtrflx(1)    = - tmp_pcpdrp &
-              - ((tmp_edir + tmp_etrani(1))/LVH2O)
+            NOAHMP36_struc(n)%noahmp36(t)%wtrflx(1)    = tmp_pcpdrp &
+              - ((tmp_edir + tmp_etrani(1)))
             do i=2, NOAHMP36_struc(n)%nsoil
-              NOAHMP36_struc(n)%noahmp36(t)%wtrflx(i)  = (tmp_etrani(i)/LVH2O)
+              NOAHMP36_struc(n)%noahmp36(t)%wtrflx(i)  = - (tmp_etrani(i))
             enddo
 #endif
             ![ 1] output variable: soil_temp (unit=K). ***  soil layer temperature
