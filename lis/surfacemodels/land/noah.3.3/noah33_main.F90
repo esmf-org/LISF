@@ -826,7 +826,7 @@ subroutine noah33_main(n)
            noah33_struc(n)%noah(t)%soldrain1rt = noah33_struc(n)%noah(t)%runoff2*dt*1000.0
 #endif
 #ifdef PARFLOW
-           noah33_struc(n)%noah(t)%wtrflx(1) = - ((edir + et(1))/LVH2O) - pcpdrp
+           noah33_struc(n)%noah(t)%wtrflx(1) = - ((edir + et(1))/LVH2O) + pcpdrp
            do i=2,noah33_struc(n)%nslay
              noah33_struc(n)%noah(t)%wtrflx(i) = (et(i)/LVH2O)
            enddo
