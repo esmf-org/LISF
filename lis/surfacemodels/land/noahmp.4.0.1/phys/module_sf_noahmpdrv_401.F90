@@ -55,7 +55,7 @@ CONTAINS
                sfcheadrt,INFXSRT,soldrain,                                  &
 #endif
 #ifdef PARFLOW
-               PCPDRP,ETRANI,                                               & ! out :
+               QINSUR,ETRANI,                                               & ! out :
 #endif
                ids,ide,  jds,jde,  kds,kde,                    &
                ims,ime,  jms,jme,  kms,kme,                    &
@@ -155,7 +155,7 @@ CONTAINS
     REAL,    DIMENSION( ims:ime,          jms:jme ), INTENT(INOUT) ::  sfcheadrt,INFXSRT,soldrain   ! for WRF-Hydro
 #endif
 #ifdef PARFLOW
-    REAL,    DIMENSION( ims:ime,          jms:jme ), INTENT(OUT) :: PCPDRP ! precipitation drip [kg m-2 s-1]
+    REAL,    DIMENSION( ims:ime,          jms:jme ), INTENT(OUT) :: QINSUR ! water input on soil surface [m/s]
     REAL,    DIMENSION( ims:ime, 1:nsoil, jms:jme ), INTENT(OUT) :: ETRANI ! volumetric liquid soil moisture [m3/m3]
 #endif
 ! placeholders for 3D soil
@@ -513,7 +513,7 @@ CONTAINS
     END DO
 
 #ifdef PARFLOW
-    PCPDRP = 0.0
+    QINSUR = 0.0
     ETRANI = 0.0
 #endif
 
@@ -928,7 +928,7 @@ CONTAINS
             , sfcheadrt(i,j)                               &
 #endif
 #ifdef PARFLOW
-            , PCPDRP(I,J), ETRANI(I,1:NSOIL,J)                          & ! OUT :
+            , QINSUR(I,J), ETRANI(I,1:NSOIL,J)                          & ! OUT :
 #endif
             )            ! OUT :
                   

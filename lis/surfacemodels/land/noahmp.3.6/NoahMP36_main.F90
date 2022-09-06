@@ -218,9 +218,8 @@ subroutine NoahMP36_main(n)
     real                 :: tmp_infxs1rt           ! variable for LISHydro coupling [mm]
     real                 :: tmp_soldrain1rt        ! variable for LISHydro coupling [mm]
 #ifdef PARFLOW
-    real                 :: tmp_pcpdrp             ! precipitation drip [kg m-2 s-1]
+    real                 :: tmp_qinsur             ! water input on soil surface [m/s]
     real,allocatable     :: tmp_etrani(:)          ! evapotranspiration from soil layers [mm s-1]
-    real,parameter       :: LVH2O = 2.501000E+6    ! Latent heat for evapo for water  
 #endif
 
     ! SY: Begin for enabling OPTUE
@@ -844,7 +843,7 @@ subroutine NoahMP36_main(n)
                                   
                                   tmp_sfcheadrt           & ! out  - extra output for WRF-HYDRO [m]
 #ifdef PARFLOW
-                                  ,tmp_pcpdrp             & ! out  - precipitation drip [kg m-2 s-1]
+                                  ,tmp_qinsur             & ! out  - water input on soil surface [m/s]
                                   ,tmp_etrani             & ! out  - evapotranspiration from soil layers [mm s-1]
 #endif
                                   )
@@ -959,7 +958,7 @@ subroutine NoahMP36_main(n)
             NOAHMP36_struc(n)%noahmp36(t)%infxs1rt     = tmp_infxs1rt
             NOAHMP36_struc(n)%noahmp36(t)%soldrain1rt  = tmp_soldrain1rt
 #ifdef PARFLOW
-            NOAHMP36_struc(n)%noahmp36(t)%wtrflx(1)    = tmp_pcpdrp &
+            NOAHMP36_struc(n)%noahmp36(t)%wtrflx(1)    = (tmp_qinsur*1000.0) &
               - ((tmp_edir + tmp_etrani(1)))
             do i=2, NOAHMP36_struc(n)%nsoil
               NOAHMP36_struc(n)%noahmp36(t)%wtrflx(i)  = - (tmp_etrani(i))
@@ -1484,6 +1483,21 @@ subroutine NoahMP36_main(n)
                  tmp_subsnow, vlevel=1,         &
                  unit="kg m-2 s-1", direction="-", surface_type = LIS_rc%lsm_index)
             
+#ifdef PARFLOW
+            ! output variable: qinsur (unit=kg/m2). ***  water input on soil surface
+            call LIS_diagnoseSurfaceOutputVar(n, t, LIS_MOC_QINSUR, value = (tmp_qinsur*1000.0), &
+                                              vlevel=1, unit="kg m-2 s-1", direction="DN", surface_type = LIS_rc%lsm_index)
+
+            ! output variable: etrani (unit=kg/m2). ***  evapotranspiration from soil layers
+            ! output variable: wtrflx (unit=kg/m2). ***  total water flux
+            do i=1, NOAHMP36_struc(n)%nsoil
+                call LIS_diagnoseSurfaceOutputVar(n, t, LIS_MOC_ETRANI, value = tmp_etrani(i), &
+                                              vlevel=i, unit="kg m-2 s-1", direction="UP", surface_type = LIS_rc%lsm_index)
+                call LIS_diagnoseSurfaceOutputVar(n, t, LIS_MOC_WTRFLX, value = NOAHMP36_struc(n)%noahmp36(t)%wtrflx(i), &
+                                              vlevel=i, unit="kg m-2 s-1", direction="DN", surface_type = LIS_rc%lsm_index)
+            end do
+
+#endif
             ! reset forcing variables to 0 for accumulation 
             NOAHMP36_struc(n)%noahmp36(t)%tair = 0.0
             NOAHMP36_struc(n)%noahmp36(t)%psurf = 0.0
