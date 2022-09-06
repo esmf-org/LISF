@@ -400,7 +400,7 @@ contains
                    ,SFCHEADRT                                                  & ! IN/OUT :
 #endif
 #ifdef PARFLOW
-                   ,PCPDRP,ETRANI                                              & ! OUT :
+                   ,QINSUR,ETRANI                                              & ! OUT :
 #endif
                    )
 
@@ -460,7 +460,7 @@ contains
   REAL                           , INTENT(INOUT)    :: sfcheadrt
 #endif
 #ifdef PARFLOW
-  REAL                           , INTENT(OUT)    :: PCPDRP !precipitation drip (mm/s)
+  REAL                           , INTENT(OUT)    :: QINSUR !water input on soil surface [m/s]
   REAL, DIMENSION(       1:NSOIL), INTENT(OUT)    :: ETRANI !evapotranspiration from soil layers (mm/s)
 #endif
 
@@ -808,7 +808,7 @@ contains
                         ,sfcheadrt                     &
 #endif
 #ifdef PARFLOW
-                 ,ETRANI                                          & !out
+                 ,QINSUR,ETRANI                                   & !out
 #endif
                  )  !out
 
@@ -873,9 +873,6 @@ contains
     RELSMC(:) = (SMC(:)               - parameters%SMCWLT(:)) /        &
                 (parameters%SMCMAX(:) - parameters%SMCWLT(:))
 
-#ifdef PARFLOW
-    PCPDRP = QTHROR + QMELT
-#endif
 
   END SUBROUTINE NOAHMP_SFLX
 
@@ -6359,7 +6356,7 @@ ENDIF   ! CROPTYPE == 0
                         ,sfcheadrt                     &
 #endif
 #ifdef PARFLOW
-                    ,ETRANI                                          & !out
+                    ,QINSUR,ETRANI                                   & !out
 #endif
                     )  !out
 ! ----------------------------------------------------------------------  
@@ -6450,7 +6447,11 @@ ENDIF   ! CROPTYPE == 0
 
 ! local
   INTEGER                                        :: IZ
+#ifdef PARFLOW
+  REAL,                            INTENT(OUT)   :: QINSUR  !water input on soil surface [m/s]
+#else
   REAL                                           :: QINSUR  !water input on soil surface [m/s]
+#endif
   REAL                                           :: QSEVA   !soil surface evap rate [mm/s]
   REAL                                           :: QSDEW   !soil surface dew rate [mm/s]
   REAL                                           :: QSNFRO  !snow surface frost rate[mm/s]

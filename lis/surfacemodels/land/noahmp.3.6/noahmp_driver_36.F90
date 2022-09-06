@@ -60,7 +60,7 @@ subroutine noahmp_driver_36(iloc, jloc, &
                             rivsto, fldsto, fldfrc, &
                             sfcheadrt                                                   & ! out :
 #ifdef PARFLOW
-                            ,pcpdrp,etrani                                              & ! out :
+                            ,qinsur,etrani                                              & ! out :
 #endif
                             )
   
@@ -304,7 +304,7 @@ subroutine noahmp_driver_36(iloc, jloc, &
   real, intent(inout) :: fldfrc               ! flood storage
   real, intent(inout) :: sfcheadrt            ! extra output for WRF-HYDRO [m] 
 #ifdef PARFLOW
-  real, intent(out)   :: pcpdrp               ! precipitation drip [kg m-2 s-1]
+  real, intent(out)   :: qinsur               ! water input on soil surface [m/s]
   real, intent(out)   :: etrani(nsoil)        ! evapotranspiration from soil layers [mm s-1]
 #endif
 
@@ -396,7 +396,7 @@ subroutine noahmp_driver_36(iloc, jloc, &
 #endif
 
 #ifdef PARFLOW
-  pcpdrp = 0.0
+  qinsur = 0.0
   etrani = 0.0
 #endif
 
@@ -603,7 +603,7 @@ subroutine noahmp_driver_36(iloc, jloc, &
                ,sfcheadrt                                                  & ! in/out :
 #endif
 #ifdef PARFLOW
-               ,pcpdrp,etrani                                              & ! out :
+               ,qinsur,etrani                                              & ! out :
 #endif
                )
 

@@ -55,7 +55,7 @@ subroutine noahmp_driver_401(n, ttile, itimestep, &
      parameters ,                                                & ! out Noah MP only
      sfcheadrt , INFXSRT, soldrain                               & ! For WRF-Hydro
 #ifdef PARFLOW
-     ,pcpdrp, etrani                                             & ! out Noah MP only
+     ,qinsur, etrani                                             & ! out Noah MP only
 #endif
      )
 
@@ -264,7 +264,7 @@ subroutine noahmp_driver_401(n, ttile, itimestep, &
   real,   intent(in)  :: fldsto               ! flood storage [m s-1]
   real,   intent(in)  :: fldfrc               ! flooded fraction [-]
 #ifdef PARFLOW
-  real, intent(out) :: pcpdrp        ! precipitation drip [kg m-2 s-1]
+  real, intent(out) :: qinsur        ! water input on soil surface [m/s]
   real, intent(out) :: etrani(nsoil) ! evapotranspiration from soil layers [mm s-1]
 #endif
 
@@ -476,7 +476,7 @@ subroutine noahmp_driver_401(n, ttile, itimestep, &
   real, dimension(1,1) :: fldstoin
   real, dimension(1,1) :: fldfrcin
 #ifdef PARFLOW
-  real, dimension(1,1) :: pcpdrpout
+  real, dimension(1,1) :: qinsurout
   real, dimension(1,nsoil,1) :: etraniout
 #endif
 
@@ -739,7 +739,7 @@ subroutine noahmp_driver_401(n, ttile, itimestep, &
   relsmcout(1,:,1)  = relsmc(:)
   rsout(1,1)    = rs
 #ifdef PARFLOW
-  pcpdrpout(1,1) = pcpdrp
+  qinsurout(1,1) = qinsur
   etraniout(1,:,1) = etrani(:)
 #endif
 
@@ -802,7 +802,7 @@ subroutine noahmp_driver_401(n, ttile, itimestep, &
        sfcheadrt, INFXSRT, soldrain,                               &
 #endif
 #ifdef PARFLOW
-       pcpdrpout, etraniout,                                       &
+       qinsurout, etraniout,                                       &
 #endif
        ids,ide,  jds,jde,  kds,kde,                                &
        ims,ime,  jms,jme,  kms,kme,                                &
@@ -934,7 +934,7 @@ subroutine noahmp_driver_401(n, ttile, itimestep, &
   soldrain = 0.0
 #endif
 #ifdef PARFLOW
-  pcpdrp = pcpdrpout(1,1)
+  qinsur = qinsurout(1,1)
   etrani(:) = etraniout(1,:,1)
 #endif
 
