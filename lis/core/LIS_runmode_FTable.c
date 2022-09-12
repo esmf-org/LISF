@@ -42,6 +42,24 @@ struct rmoderunnode
 } ;
 struct rmoderunnode* rmoderun_table = NULL; 
 
+struct rmodecyclenode
+{
+  char *name;
+  void (*func)();
+
+  struct rmodecyclenode* next;
+} ;
+struct rmodecyclenode* rmodecycle_table = NULL;
+
+struct rmoderesetnode
+{
+  char *name;
+  void (*func)();
+
+  struct rmoderesetnode* next;
+} ;
+struct rmoderesetnode* rmodereset_table = NULL;
+
 struct rmodefinalnode
 { 
   char *name;
@@ -195,6 +213,155 @@ void FTN(lisrun)(char *j,int len)
     if(current==NULL) {
       printf("****************Error****************************\n"); 
       printf("run routine for runmode %s is not defined\n",j); 
+      printf("program will seg fault.....\n"); 
+      printf("****************Error****************************\n"); 
+    }
+  }
+  current->func(); 
+}
+
+//BOP
+// !ROUTINE: registerliscycle
+// \label{registerliscycle}
+// 
+// !INTERFACE:
+void FTN(registerliscycle)(char *j, void (*func)(),int len)
+//  
+// !DESCRIPTION: 
+//  Makes an entry in the registry for the LIS 
+//  single cycle run method for a certain running mode. 
+// 
+// The arguments are:
+// \begin{description}
+//  \item[j]
+//   name of the running mode
+// \end{description}
+//EOP
+{ 
+  int len1;
+  struct rmodecyclenode* current;
+  struct rmodecyclenode* pnode; 
+  // create node
+  
+  len1 = len + 1; // ensure that there is space for terminating null
+  pnode=(struct rmodecyclenode*) malloc(sizeof(struct rmodecyclenode));
+  pnode->name=(char*) calloc(len1,sizeof(char));
+  strncpy(pnode->name,j,len);
+  pnode->func = func;
+  pnode->next = NULL; 
+
+  if(rmodecycle_table == NULL){
+    rmodecycle_table = pnode;
+  }
+  else{
+    current = rmodecycle_table; 
+    while(current->next!=NULL){
+      current = current->next;
+    }
+    current->next = pnode; 
+  }
+}
+//BOP
+// !ROUTINE: liscycle
+// \label{liscycle}
+// 
+// !INTERFACE:
+void FTN(liscycle)(char *j,int len)
+//  
+// !DESCRIPTION:
+//  Invokes the LIS single cycle run method from the registry 
+//  for the specified running mode
+// 
+// The arguments are:
+// \begin{description}
+//  \item[j]
+//   name of the running mode
+// \end{description}
+//EOP
+{ 
+  struct rmodecyclenode* current;
+  
+  current = rmodecycle_table;
+  while(strcmp(current->name,j)!=0){
+    current = current->next;
+    if(current==NULL) {
+      printf("****************Error****************************\n"); 
+      printf("run cycle routine for runmode %s is not defined\n",j); 
+      printf("program will seg fault.....\n"); 
+      printf("****************Error****************************\n"); 
+    }
+  }
+  current->func(); 
+}
+
+
+//BOP
+// !ROUTINE: registerlisreset
+// \label{registerlisreset}
+// 
+// !INTERFACE:
+void FTN(registerlisreset)(char *j, void (*func)(),int len)
+//  
+// !DESCRIPTION: 
+//  Makes an entry in the registry for the LIS 
+//  reset run method for a certain running mode. 
+// 
+// The arguments are:
+// \begin{description}
+//  \item[j]
+//   name of the running mode
+// \end{description}
+//EOP
+{ 
+  int len1;
+  struct rmoderesetnode* current;
+  struct rmoderesetnode* pnode; 
+  // create node
+  
+  len1 = len + 1; // ensure that there is space for terminating null
+  pnode=(struct rmoderesetnode*) malloc(sizeof(struct rmoderesetnode));
+  pnode->name=(char*) calloc(len1,sizeof(char));
+  strncpy(pnode->name,j,len);
+  pnode->func = func;
+  pnode->next = NULL; 
+
+  if(rmodereset_table == NULL){
+    rmodereset_table = pnode;
+  }
+  else{
+    current = rmodereset_table; 
+    while(current->next!=NULL){
+      current = current->next;
+    }
+    current->next = pnode; 
+  }
+}
+//BOP
+// !ROUTINE: lisreset
+// \label{lisreset}
+// 
+// !INTERFACE:
+void FTN(lisreset)(char *j,int len)
+//  
+// !DESCRIPTION:
+//  Invokes the LIS reset run method from the registry 
+//  for the specified running mode
+// 
+// The arguments are:
+// \begin{description}
+//  \item[j]
+//   name of the running mode
+// \end{description}
+//EOP
+{ 
+  struct rmoderesetnode* current;
+  
+  current = rmodereset_table;
+  while(strcmp(current->name,j)!=0){
+    current = current->next;
+    if(current==NULL) {
+      printf("****************Error****************************\n"); 
+      printf("reset run routine for runmode %s is not defined\n",j); 
       printf("program will seg fault.....\n"); 
       printf("****************Error****************************\n"); 
     }
