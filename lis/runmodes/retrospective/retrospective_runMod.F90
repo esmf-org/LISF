@@ -34,6 +34,7 @@ module retrospective_runMod
 !-----------------------------------------------------------------------------
   public :: LIS_init_retrospective  !init method for retrospective mode
   public :: LIS_run_retrospective   !run method for retrospective mode
+  public :: LIS_cycle_retrospective   !cycle method for retrospective mode
   public :: LIS_final_retrospective !finalize method for retrospective mode
 
 !EOP  
@@ -109,8 +110,38 @@ contains
 ! !INTERFACE:
   subroutine lis_run_retrospective
 ! !USES:
-    use LIS_coreMod,           only : LIS_rc, LIS_endofrun, LIS_timetoRunNest, &
+    use LIS_coreMod,           only : LIS_rc, LIS_endofrun, &
                                       LIS_ticktime
+    use LIS_logMod,            only : LIS_logunit
+!
+! !DESCRIPTION:
+! 
+!  This is the run method for LIS in a retrospective running mode. 
+!  The following calls are invoked from this method. 
+! \begin{description} 
+!  \item[LIS\_endofrun] (\ref{LIS_endofrun}) \newline
+!    check to see if the end of simulation has reached
+!  \item[LIS\_ticktime] (\ref{LIS_ticktime}) \newline
+!    advance model clock
+! \end{description} 
+!
+!EOP
+    integer :: n
+
+    do while (.NOT. LIS_endofrun())
+       call LIS_ticktime 
+       call lis_cycle_retrospective()
+       flush(LIS_logunit)
+    enddo
+  end subroutine lis_run_retrospective
+
+!BOP
+! !ROUTINE: lis_cycle_retrospective
+!
+! !INTERFACE:
+  subroutine lis_cycle_retrospective
+! !USES:
+    use LIS_coreMod,           only : LIS_rc, LIS_timetoRunNest
     use LIS_surfaceModelMod,   only : LIS_surfaceModel_f2t, LIS_surfaceModel_run,&
                                       LIS_surfaceModel_output, LIS_surfaceModel_writerestart, &
                                       LIS_surfaceModel_perturb_states
@@ -125,17 +156,12 @@ contains
     use LIS_irrigationMod,     only : LIS_irrigation_run,LIS_irrigation_output
     use LIS_appMod,            only : LIS_runAppModel, LIS_outputAppModel
     use LIS_RTMMod,            only : LIS_RTM_run, LIS_RTM_output
-    use LIS_logMod,            only : LIS_logunit
 !
 ! !DESCRIPTION:
 ! 
 !  This is the run method for LIS in a retrospective running mode. 
 !  The following calls are invoked from this method. 
 ! \begin{description} 
-!  \item[LIS\_endofrun] (\ref{LIS_endofrun}) \newline
-!    check to see if the end of simulation has reached
-!  \item[LIS\_ticktime] (\ref{LIS_ticktime}) \newline
-!    advance model clock
 !  \item[LIS\_timeToRunNest] (\ref{LIS_timeToRunNest}) \newline
 !    check to see if the current nest needs to be run. 
 !  \item[LIS\_setDynparams] (\ref{LIS_setDynparams}) \newline
@@ -185,39 +211,34 @@ contains
 !EOP
     integer :: n
 
-    do while (.NOT. LIS_endofrun())
-! Run each nest separately 
-       call LIS_ticktime 
-       do n=1,LIS_rc%nnest
-          if(LIS_timeToRunNest(n)) then 
-             call LIS_setDynparams(n)
-             call LIS_get_met_forcing(n)
-             call LIS_perturb_forcing(n)
-             call LIS_irrigation_run(n)
-             call LIS_surfaceModel_f2t(n)  
-             call LIS_surfaceModel_run(n)
-             call LIS_surfaceModel_perturb_states(n)
-             call LIS_readDAobservations(n)
-             call LIS_perturb_DAobservations(n)   
-             call LIS_perturb_writerestart(n)
-             call LIS_dataassim_run(n)
-             call LIS_dataassim_output(n)
-             call LIS_surfaceModel_output(n)
-             call LIS_surfaceModel_writerestart(n)
-             call LIS_irrigation_output(n)
-             call LIS_routing_run(n)
-             call LIS_routing_writeoutput(n)
-             call LIS_routing_writerestart(n)
-             call LIS_RTM_run(n)
-             call LIS_RTM_output(n)
-             call LIS_runAppModel(n)             
-             call LIS_outputAppModel(n)
-          endif
-       enddo
-       flush(LIS_logunit)
-       if (.NOT. LIS_rc%offline) exit
+! Run each nest separately
+    do n=1,LIS_rc%nnest
+       if(LIS_timeToRunNest(n)) then 
+          call LIS_setDynparams(n)
+          call LIS_get_met_forcing(n)
+          call LIS_perturb_forcing(n)
+          call LIS_irrigation_run(n)
+          call LIS_surfaceModel_f2t(n)  
+          call LIS_surfaceModel_run(n)
+          call LIS_surfaceModel_perturb_states(n)
+          call LIS_readDAobservations(n)
+          call LIS_perturb_DAobservations(n)   
+          call LIS_perturb_writerestart(n)
+          call LIS_dataassim_run(n)
+          call LIS_dataassim_output(n)
+          call LIS_surfaceModel_output(n)
+          call LIS_surfaceModel_writerestart(n)
+          call LIS_irrigation_output(n)
+          call LIS_routing_run(n)
+          call LIS_routing_writeoutput(n)
+          call LIS_routing_writerestart(n)
+          call LIS_RTM_run(n)
+          call LIS_RTM_output(n)
+          call LIS_runAppModel(n)             
+          call LIS_outputAppModel(n)
+       endif
     enddo
-  end subroutine lis_run_retrospective
+  end subroutine lis_cycle_retrospective
 
 !BOP
 ! !ROUTINE: lis_final_retrospective

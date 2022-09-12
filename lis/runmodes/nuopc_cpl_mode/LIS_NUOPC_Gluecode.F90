@@ -636,7 +636,6 @@ contains
     if(.not.LIS_initialized) then
        if (present(configFile)) LIS_rc%lis_config_file = trim(configFile)
        call LIS_config_init(vm=vm)
-       LIS_rc%offline = .false.
        call lisinit(trim(LIS_rc%runmode)//char(0))
 
        call LISWRF_alloc_states
@@ -755,7 +754,7 @@ contains
 
     ! Confirm if the timemgr should receive current time or stop time
 !    call ESMF_TimeGet(stopTime, yy=yy, mm=mm, dd=dd, h=h, m=m, s=s, rc=rc)
-    call ESMF_TimeGet(currTime, yy=yy, mm=mm, dd=dd, h=h, m=m, s=s, rc=rc)
+    call ESMF_TimeGet(stopTime, yy=yy, mm=mm, dd=dd, h=h, m=m, s=s, rc=rc)
     if(ESMF_STDERRORCHECK(rc)) return ! bail out
 
     call LIS_timemgr_set(LIS_rc, yy, mm, dd, h, m, s, 0, 0.0)
@@ -766,7 +765,7 @@ contains
     if(ESMF_STDERRORCHECK(rc)) return ! bail out
 
     ! TBD new mode for no met forcings
-    call lisrun(trim(LIS_rc%runmode)//char(0))
+    call liscycle(trim(LIS_rc%runmode)//char(0))
 
     ! =========================================================
     ! Write LIS output data to export state

@@ -211,9 +211,6 @@ subroutine LIS_lsmcpl_plugin
                                  trim(LIS_wrfcplId)//char(0), &
                                  noah33_setwrfexport)
     call registerlsmcplsetexport(trim(LIS_noah33Id)//"+"//&
-                                 trim(LIS_nuopccplId)//char(0), &
-                                 noah33_setwrfexport)
-    call registerlsmcplsetexport(trim(LIS_noah33Id)//"+"//&
                                  trim(LIS_retroId)//char(0), &
                                  noah33_setwrfexport)
 #endif
@@ -223,9 +220,6 @@ subroutine LIS_lsmcpl_plugin
                                  trim(LIS_wrfcplId)//char(0), &
                                  noahMP36_setwrfexport)
     call registerlsmcplsetexport(trim(LIS_noahmp36Id)//"+"//&
-                                 trim(LIS_nuopccplId)//char(0), &
-                                 noahMP36_setwrfexport)
-    call registerlsmcplsetexport(trim(LIS_noahmp36Id)//"+"//&
                                  trim(LIS_retroId)//char(0), &
                                  noahMP36_setwrfexport)
 #endif
@@ -233,9 +227,6 @@ subroutine LIS_lsmcpl_plugin
 #if ( defined SM_NOAHMP_4_0_1 )
    call registerlsmcplsetexport(trim(LIS_noahmp401Id)//"+"//&
                                  trim(LIS_wrfcplId)//char(0), &
-                                 noahMP401_setwrfexport)
-    call registerlsmcplsetexport(trim(LIS_noahmp401Id)//"+"//&
-                                 trim(LIS_nuopccplId)//char(0), &
                                  noahMP401_setwrfexport)
     call registerlsmcplsetexport(trim(LIS_noahmp401Id)//"+"//&
                                  trim(LIS_retroId)//char(0), &

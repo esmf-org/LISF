@@ -398,7 +398,6 @@ contains
     LIS_rc%use_twelve = .false.
     LIS_rc%reset_flag = .false.
     LIS_rc%run_model  = .true.
-    LIS_rc%offline    = .true.
 
   end subroutine lisconfig_generic
 
