@@ -53,8 +53,8 @@ module LIS_NUOPC_Flags
   type(field_init_flag), parameter ::       &
     FLD_INIT_ERROR   = field_init_flag(-1), &
     FLD_INIT_ZERO    = field_init_flag(0),  &
-    FLD_INIT_SKIP    = field_init_flag(1),  &
-    FLD_INIT_MISSING = field_init_flag(2),  &
+    FLD_INIT_MODEL   = field_init_flag(1),  &
+    FLD_INIT_FILLV   = field_init_flag(2),  &
     FLD_INIT_IMPORT  = field_init_flag(3)
 
 !-----------------------------------------------------------------------------
@@ -69,8 +69,8 @@ module LIS_NUOPC_Flags
   public MISSINGVAL_SKPCPY
   public FLD_INIT_ERROR
   public FLD_INIT_ZERO
-  public FLD_INIT_SKIP
-  public FLD_INIT_MISSING
+  public FLD_INIT_MODEL
+  public FLD_INIT_FILLV
   public FLD_INIT_IMPORT
 
   public operator(==), assignment(=)
@@ -163,10 +163,10 @@ module LIS_NUOPC_Flags
     type(field_init_flag), intent(in) :: val
     if (val == FLD_INIT_ZERO) then
       write(string,'(a)') 'FLD_INIT_ZERO'
-    elseif (val == FLD_INIT_SKIP) then
-      write(string,'(a)') 'FLD_INIT_SKIP'
-    elseif (val == FLD_INIT_MISSING) then
-      write(string,'(a)') 'FLD_INIT_MISSING'
+    elseif (val == FLD_INIT_MODEL) then
+      write(string,'(a)') 'FLD_INIT_MODEL'
+    elseif (val == FLD_INIT_FILLV) then
+      write(string,'(a)') 'FLD_INIT_FILLV'
     elseif (val == FLD_INIT_IMPORT) then
       write(string,'(a)') 'FLD_INIT_IMPORT'
     else
@@ -188,10 +188,12 @@ module LIS_NUOPC_Flags
       val = FLD_INIT_ERROR
     elseif (ustring .eq. 'FLD_INIT_ZERO') then
       val = FLD_INIT_ZERO
-    elseif (ustring .eq. 'FLD_INIT_SKIP') then
-      val = FLD_INIT_SKIP
+    elseif (ustring .eq. 'FLD_INIT_MODEL') then
+      val = FLD_INIT_MODEL
+    elseif (ustring .eq. 'FLD_INIT_FILLV') then
+      val = FLD_INIT_FILLV
     elseif (ustring .eq. 'FLD_INIT_MISSING') then
-      val = FLD_INIT_MISSING
+      val = FLD_INIT_FILLV
     elseif (ustring .eq. 'FLD_INIT_IMPORT') then
       val = FLD_INIT_IMPORT
     else
