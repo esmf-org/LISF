@@ -261,8 +261,8 @@ module LIS_NUOPC
     logical               :: realizeAllExport = .FALSE.
     logical               :: nestToNest       = .FALSE.
     logical               :: cplEns           = .FALSE.
-    type(field_init_flag) :: init_export      = FLD_INIT_MISSING
-    type(field_init_flag) :: init_import      = FLD_INIT_MISSING
+    type(field_init_flag) :: init_export      = FLD_INIT_FILLV
+    type(field_init_flag) :: init_import      = FLD_INIT_FILLV
     type(missingval_flag) :: misg_import      = MISSINGVAL_FAIL
     character(len=40)     :: dirOutput        = "."
     integer               :: nnests           = 0
@@ -456,14 +456,14 @@ module LIS_NUOPC
 
       ! export data initialization type
       call ESMF_AttributeGet(gcomp, name="initialize_export", &
-        value=value, defaultValue="FLD_INIT_MISSING", &
+        value=value, defaultValue="FLD_INIT_MODEL", &
         convention="NUOPC", purpose="Instance", rc=rc)
       if (ESMF_STDERRORCHECK(rc)) return  ! bail out
       is%wrap%init_export = value
 
       ! Initialize import setting
       call ESMF_AttributeGet(gcomp, name="initialize_import", &
-        value=value, defaultValue="FLD_INIT_MISSING", &
+        value=value, defaultValue="FLD_INIT_FILLV", &
         convention="NUOPC", purpose="Instance", rc=rc)
       if (ESMF_STDERRORCHECK(rc)) return  ! bail out
       is%wrap%init_import = value
@@ -935,21 +935,16 @@ module LIS_NUOPC
         endif
       enddo
 
-      if(is%wrap%init_export .eq. FLD_INIT_MISSING) then
+      if(.not.(is%wrap%init_import .eq. FLD_INIT_MODEL)) then
+        call LIS_ESMF_FillState(is%wrap%NStateImp(nIndex), MISSINGVALUE, &
+          rc=rc)
+        if (ESMF_STDERRORCHECK(rc)) return
+      endif
+
+      if(.not.(is%wrap%init_export .eq. FLD_INIT_MODEL)) then
         call LIS_ESMF_FillState(is%wrap%NStateExp(nIndex), MISSINGVALUE, &
           rc=rc)
         if (ESMF_STDERRORCHECK(rc)) return
-      elseif(is%wrap%init_export .eq. FLD_INIT_ZERO) then
-        call LIS_ESMF_FillState(is%wrap%NStateExp(nIndex), 0.0_ESMF_KIND_R8, &
-          rc=rc)
-        if (ESMF_STDERRORCHECK(rc)) return
-      elseif(is%wrap%init_export .eq. FLD_INIT_SKIP) then
-        ! do nothing
-      else
-        call ESMF_LogSetError(ESMF_FAILURE, &
-          msg="Invalid export initialization option.", &
-          line=__LINE__,file=__FILE__,rcToReturn=rc)
-        return  ! bail out
       endif
 
       is%wrap%modes(nIndex) = LIS_RunModeGet(LIS_FieldList,is%wrap%NStateImp(nIndex),rc=rc)
@@ -1169,12 +1164,10 @@ module LIS_NUOPC
                 call ESMF_FieldFill(ifield, dataFillScheme="const", &
                   const1=0.0_ESMF_KIND_R8, rc=rc)
                 if (ESMF_STDERRORCHECK(rc)) return
-              elseif (is%wrap%init_import .eq. FLD_INIT_MISSING) then
+              elseif (is%wrap%init_import .eq. FLD_INIT_FILLV) then
                 call ESMF_FieldFill(ifield, dataFillScheme="const", &
                   const1=MISSINGVALUE, rc=rc)
                 if (ESMF_STDERRORCHECK(rc)) return
-              elseif (is%wrap%init_import .eq. FLD_INIT_SKIP) then
-                ! do nothing
               else
                 call ESMF_LogSetError(ESMF_FAILURE, &
                   msg="Invalid import initialization option.", &
@@ -1192,6 +1185,24 @@ module LIS_NUOPC
           file=__FILE__)) &
           return  ! bail out
       endif
+
+      if(is%wrap%init_export .eq. FLD_INIT_FILLV) then
+        call LIS_ESMF_FillState(is%wrap%NStateExp(nIndex), MISSINGVALUE, &
+          rc=rc)
+        if (ESMF_STDERRORCHECK(rc)) return
+      elseif(is%wrap%init_export .eq. FLD_INIT_ZERO) then
+        call LIS_ESMF_FillState(is%wrap%NStateExp(nIndex), 0.0_ESMF_KIND_R8, &
+          rc=rc)
+        if (ESMF_STDERRORCHECK(rc)) return
+      elseif(is%wrap%init_export .eq. FLD_INIT_MODEL) then
+        ! do nothing
+      else
+        call ESMF_LogSetError(ESMF_FAILURE, &
+          msg="Invalid export initialization option.", &
+          line=__LINE__,file=__FILE__,rcToReturn=rc)
+        return  ! bail out
+      endif
+
     enddo ! enddo nnests
 
     ! set InitializeDataComplete Attribute to "true", indicating to the
