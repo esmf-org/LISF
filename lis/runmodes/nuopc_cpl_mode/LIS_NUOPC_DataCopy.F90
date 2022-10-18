@@ -127,11 +127,11 @@ contains
     rc = ESMF_SUCCESS
 
     call ESMF_FieldGet(field=field,array=array,rc=rc)
-    if(ESMF_STDERRORCHECK(rc)) return ! bail out
+    if(ESMF_STDERRORCHECK(rc)) return
     call ESMF_FieldGet(field=fieldLIS,array=arrayLIS,rc=rc)
-    if(ESMF_STDERRORCHECK(rc)) return ! bail out
+    if(ESMF_STDERRORCHECK(rc)) return
     call LIS_CopyToLIS(array=array,arrayLIS=arrayLIS,nest=nest,rc=rc)
-    if(ESMF_STDERRORCHECK(rc)) return ! bail out
+    if(ESMF_STDERRORCHECK(rc)) return
   end subroutine
 
   !-----------------------------------------------------------------------------
@@ -151,9 +151,9 @@ contains
     rc = ESMF_SUCCESS
 
     call ESMF_FieldGet(field=field,array=array,rc=rc)
-    if(ESMF_STDERRORCHECK(rc)) return ! bail out
+    if(ESMF_STDERRORCHECK(rc)) return
     call LIS_CopyToLIS(array=array,farrayLIS=farrayLIS,nest=nest,rc=rc)
-    if(ESMF_STDERRORCHECK(rc)) return ! bail out
+    if(ESMF_STDERRORCHECK(rc)) return
   end subroutine
 
   !-----------------------------------------------------------------------------
@@ -175,12 +175,12 @@ contains
     rc = ESMF_SUCCESS
 
     call ESMF_FieldGet(field=fieldLIS,array=arrayLIS,rc=rc)
-    if(ESMF_STDERRORCHECK(rc)) return ! bail out
+    if(ESMF_STDERRORCHECK(rc)) return
     call ESMF_FieldGet(field=field,array=array,rc=rc)
-    if(ESMF_STDERRORCHECK(rc)) return ! bail out
+    if(ESMF_STDERRORCHECK(rc)) return
     call LIS_CopyFromLIS(arrayLIS=arrayLIS,array=array,nest=nest,&
       fillVal=fillVal,rc=rc)
-    if(ESMF_STDERRORCHECK(rc)) return ! bail out
+    if(ESMF_STDERRORCHECK(rc)) return
   end subroutine
 
   !-----------------------------------------------------------------------------
@@ -201,10 +201,10 @@ contains
     rc = ESMF_SUCCESS
 
     call ESMF_FieldGet(field=field,array=array,rc=rc)
-    if(ESMF_STDERRORCHECK(rc)) return ! bail out
+    if(ESMF_STDERRORCHECK(rc)) return
     call LIS_CopyFromLIS(farrayLIS=farrayLIS,array=array,nest=nest,&
       fillVal=fillVal,rc=rc)
-    if(ESMF_STDERRORCHECK(rc)) return ! bail out
+    if(ESMF_STDERRORCHECK(rc)) return
   end subroutine
 
   !-----------------------------------------------------------------------------
@@ -253,82 +253,82 @@ contains
       call ESMF_LogSetError(ESMF_RC_ARG_OUTOFRANGE, &
         msg="Cannot copy. Array is not a 2D or 3D array.", &
         line=__LINE__, file=FILENAME, rcToReturn=rc)
-      return  ! bail out
+      return
     endif
     if (rankLIS /= 1) then
       call ESMF_LogSetError(ESMF_RC_ARG_OUTOFRANGE, &
         msg="Cannot copy. LIS array is not a 1D tile array.", &
         line=__LINE__, file=FILENAME, rcToReturn=rc)
-      return  ! bail out
+      return
     endif
     if (localDeCount /= localDeCountLIS) then
       call ESMF_LogSetError(ESMF_RC_ARG_OUTOFRANGE, &
         msg="Cannot copy. LIS array does not match array decomposition.", &
         line=__LINE__, file=FILENAME, rcToReturn=rc)
-      return  ! bail out
+      return
     endif
     if (typekind /= typekindLIS) then
       call ESMF_LogSetError(ESMF_RC_ARG_OUTOFRANGE, &
         msg="Cannot copy. LIS array typekind does not match array typekind.", &
         line=__LINE__, file=FILENAME, rcToReturn=rc)
-      return  ! bail out
+      return
     endif
 
     if(typekind==ESMF_TYPEKIND_I4) then
       call ESMF_ArrayGet(arrayLIS,farrayPtr=farrayLIS_I4,rc=rc)
-      if(ESMF_STDERRORCHECK(rc)) return ! bail out
+      if(ESMF_STDERRORCHECK(rc)) return
       if(rank==2) then
         call ESMF_ArrayGet(array,farrayPtr=farray_I4,rc=rc)
-        if(ESMF_STDERRORCHECK(rc)) return ! bail out
+        if(ESMF_STDERRORCHECK(rc)) return
         call LIS_CopyToLIS(farray=farray_I4,farrayLIS=farrayLIS_I4,nest=nest,rc=rc)
-        if(ESMF_STDERRORCHECK(rc)) return ! bail out
+        if(ESMF_STDERRORCHECK(rc)) return
       else
         call ESMF_ArrayGet(array,farrayPtr=farray3D_I4,rc=rc)
-        if(ESMF_STDERRORCHECK(rc)) return ! bail out
+        if(ESMF_STDERRORCHECK(rc)) return
         call LIS_CopyToLIS(farray=farray3D_I4,farrayLIS=farrayLIS_I4,nest=nest,rc=rc)
-        if(ESMF_STDERRORCHECK(rc)) return ! bail out
+        if(ESMF_STDERRORCHECK(rc)) return
       endif
     elseif(typekind==ESMF_TYPEKIND_I8) then
       call ESMF_ArrayGet(arrayLIS,farrayPtr=farrayLIS_I8,rc=rc)
-      if(ESMF_STDERRORCHECK(rc)) return ! bail out
+      if(ESMF_STDERRORCHECK(rc)) return
       if(rank==2) then
         call ESMF_ArrayGet(array,farrayPtr=farray_I8,rc=rc)
-        if(ESMF_STDERRORCHECK(rc)) return ! bail out
+        if(ESMF_STDERRORCHECK(rc)) return
         call LIS_CopyToLIS(farray=farray_I8,farrayLIS=farrayLIS_I8,nest=nest,rc=rc)
-        if(ESMF_STDERRORCHECK(rc)) return ! bail out
+        if(ESMF_STDERRORCHECK(rc)) return
       else
         call ESMF_ArrayGet(array,farrayPtr=farray3D_I8,rc=rc)
-        if(ESMF_STDERRORCHECK(rc)) return ! bail out
+        if(ESMF_STDERRORCHECK(rc)) return
         call LIS_CopyToLIS(farray=farray3D_I8,farrayLIS=farrayLIS_I8,nest=nest,rc=rc)
-        if(ESMF_STDERRORCHECK(rc)) return ! bail out
+        if(ESMF_STDERRORCHECK(rc)) return
       endif
     elseif(typekind==ESMF_TYPEKIND_R4) then
       call ESMF_ArrayGet(arrayLIS,farrayPtr=farrayLIS_R4,rc=rc)
-      if(ESMF_STDERRORCHECK(rc)) return ! bail out
+      if(ESMF_STDERRORCHECK(rc)) return
       if(rank==2) then
         call ESMF_ArrayGet(array,farrayPtr=farray_R4,rc=rc)
-        if(ESMF_STDERRORCHECK(rc)) return ! bail out
+        if(ESMF_STDERRORCHECK(rc)) return
         call LIS_CopyToLIS(farray=farray_R4,farrayLIS=farrayLIS_R4,nest=nest,rc=rc)
-        if(ESMF_STDERRORCHECK(rc)) return ! bail out
+        if(ESMF_STDERRORCHECK(rc)) return
       else
         call ESMF_ArrayGet(array,farrayPtr=farray3D_R4,rc=rc)
-        if(ESMF_STDERRORCHECK(rc)) return ! bail out
+        if(ESMF_STDERRORCHECK(rc)) return
         call LIS_CopyToLIS(farray=farray3D_R4,farrayLIS=farrayLIS_R4,nest=nest,rc=rc)
-        if(ESMF_STDERRORCHECK(rc)) return ! bail out
+        if(ESMF_STDERRORCHECK(rc)) return
       endif
     elseif(typekind==ESMF_TYPEKIND_R8) then
       call ESMF_ArrayGet(arrayLIS,farrayPtr=farrayLIS_R8,rc=rc)
-      if(ESMF_STDERRORCHECK(rc)) return ! bail out
+      if(ESMF_STDERRORCHECK(rc)) return
       if(rank==2) then
         call ESMF_ArrayGet(array,farrayPtr=farray_R8,rc=rc)
-        if(ESMF_STDERRORCHECK(rc)) return ! bail out
+        if(ESMF_STDERRORCHECK(rc)) return
         call LIS_CopyToLIS(farray=farray_R8,farrayLIS=farrayLIS_R8,nest=nest,rc=rc)
-        if(ESMF_STDERRORCHECK(rc)) return ! bail out
+        if(ESMF_STDERRORCHECK(rc)) return
       else
         call ESMF_ArrayGet(array,farrayPtr=farray3D_R8,rc=rc)
-        if(ESMF_STDERRORCHECK(rc)) return ! bail out
+        if(ESMF_STDERRORCHECK(rc)) return
         call LIS_CopyToLIS(farray=farray3D_R8,farrayLIS=farrayLIS_R8,nest=nest,rc=rc)
-        if(ESMF_STDERRORCHECK(rc)) return ! bail out
+        if(ESMF_STDERRORCHECK(rc)) return
       endif
     else
       call ESMF_LogSetError(ESMF_RC_NOT_IMPL, &
@@ -364,7 +364,7 @@ contains
     rc = ESMF_SUCCESS
 
     call ESMF_FieldGet(field=field,array=array,rc=rc)
-    if(ESMF_STDERRORCHECK(rc)) return ! bail out
+    if(ESMF_STDERRORCHECK(rc)) return
     call ESMF_ArrayGet(array,typekind=typekind,rank=rank, &
       localDeCount=localDeCount,rc=rc)
     if (ESMF_STDERRORCHECK(rc)) return
@@ -372,26 +372,26 @@ contains
       call ESMF_LogSetError(ESMF_RC_ARG_OUTOFRANGE, &
         msg="Cannot copy. Array is not a 2D or 3D array.", &
         line=__LINE__, file=FILENAME, rcToReturn=rc)
-      return  ! bail out
+      return
     endif
     if (localDeCount /= 1) then
       call ESMF_LogSetError(ESMF_RC_ARG_OUTOFRANGE, &
         msg="Cannot copy. Local DE count is not 1.", &
         line=__LINE__, file=FILENAME, rcToReturn=rc)
-      return  ! bail out
+      return
     endif
     if(rank==2) then
       call ESMF_ArrayGet(array,farrayPtr=farray,rc=rc)
-      if(ESMF_STDERRORCHECK(rc)) return ! bail out
+      if(ESMF_STDERRORCHECK(rc)) return
       call LIS_CopyToNoah_3_3(farray=farray,stdName=stdName,nest=nest, &
         missing=missing,rc=rc)
-      if(ESMF_STDERRORCHECK(rc)) return ! bail out
+      if(ESMF_STDERRORCHECK(rc)) return
     else
       call ESMF_ArrayGet(array,farrayPtr=farray3D,rc=rc)
-      if(ESMF_STDERRORCHECK(rc)) return ! bail out
+      if(ESMF_STDERRORCHECK(rc)) return
       call LIS_CopyToNoah_3_3(farray=farray3D,stdName=stdName,nest=nest, &
         missing=missing,rc=rc)
-      if(ESMF_STDERRORCHECK(rc)) return ! bail out
+      if(ESMF_STDERRORCHECK(rc)) return
     endif
   end subroutine
 
@@ -422,7 +422,7 @@ contains
     rc = ESMF_SUCCESS
 
     call ESMF_FieldGet(field=field,array=array,rc=rc)
-    if(ESMF_STDERRORCHECK(rc)) return ! bail out
+    if(ESMF_STDERRORCHECK(rc)) return
 
     call ESMF_ArrayGet(array,typekind=typekind,rank=rank, &
       localDeCount=localDeCount,rc=rc)
@@ -432,27 +432,27 @@ contains
       call ESMF_LogSetError(ESMF_RC_ARG_OUTOFRANGE, &
         msg="Cannot copy. Array is not a 2D or 3D array.", &
         line=__LINE__, file=FILENAME, rcToReturn=rc)
-      return  ! bail out
+      return
     endif
     if (localDeCount /= 1) then
       call ESMF_LogSetError(ESMF_RC_ARG_OUTOFRANGE, &
         msg="Cannot copy. Local DE count is not 1.", &
         line=__LINE__, file=FILENAME, rcToReturn=rc)
-      return  ! bail out
+      return
     endif
 
     if(rank==2) then
       call ESMF_ArrayGet(array,farrayPtr=farray,rc=rc)
-      if(ESMF_STDERRORCHECK(rc)) return ! bail out
+      if(ESMF_STDERRORCHECK(rc)) return
       call LIS_CopyToNoahMP_3_6(farray=farray,stdName=stdName,nest=nest, &
         missing=missing,rc=rc)
-      if(ESMF_STDERRORCHECK(rc)) return ! bail out
+      if(ESMF_STDERRORCHECK(rc)) return
     else
       call ESMF_ArrayGet(array,farrayPtr=farray3D,rc=rc)
-      if(ESMF_STDERRORCHECK(rc)) return ! bail out
+      if(ESMF_STDERRORCHECK(rc)) return
       call LIS_CopyToNoahMP_3_6(farray=farray3D,stdName=stdName,nest=nest, &
         missing=missing,rc=rc)
-      if(ESMF_STDERRORCHECK(rc)) return ! bail out
+      if(ESMF_STDERRORCHECK(rc)) return
     endif
   end subroutine
 
@@ -483,7 +483,7 @@ contains
     rc = ESMF_SUCCESS
 
     call ESMF_FieldGet(field=field,array=array,rc=rc)
-    if(ESMF_STDERRORCHECK(rc)) return ! bail out
+    if(ESMF_STDERRORCHECK(rc)) return
 
     call ESMF_ArrayGet(array,typekind=typekind,rank=rank, &
       localDeCount=localDeCount,rc=rc)
@@ -493,27 +493,27 @@ contains
       call ESMF_LogSetError(ESMF_RC_ARG_OUTOFRANGE, &
         msg="Cannot copy. Array is not a 2D or 3D array.", &
         line=__LINE__, file=FILENAME, rcToReturn=rc)
-      return  ! bail out
+      return
     endif
     if (localDeCount /= 1) then
       call ESMF_LogSetError(ESMF_RC_ARG_OUTOFRANGE, &
         msg="Cannot copy. Local DE count is not 1.", &
         line=__LINE__, file=FILENAME, rcToReturn=rc)
-      return  ! bail out
+      return
     endif
 
     if(rank==2) then
         call ESMF_ArrayGet(array,farrayPtr=farray,rc=rc)
-        if(ESMF_STDERRORCHECK(rc)) return ! bail out
+        if(ESMF_STDERRORCHECK(rc)) return
         call LIS_CopyToNoahMP_4_0_1(farray=farray,stdName=stdName,nest=nest, &
           missing=missing, rc=rc)
-        if(ESMF_STDERRORCHECK(rc)) return ! bail out
+        if(ESMF_STDERRORCHECK(rc)) return
     else
         call ESMF_ArrayGet(array,farrayPtr=farray3D,rc=rc)
-        if(ESMF_STDERRORCHECK(rc)) return ! bail out
+        if(ESMF_STDERRORCHECK(rc)) return
         call LIS_CopyToNoahMP_4_0_1(farray=farray3D,stdName=stdName,nest=nest, &
           missing=missing, rc=rc)
-        if(ESMF_STDERRORCHECK(rc)) return ! bail out
+        if(ESMF_STDERRORCHECK(rc)) return
     endif
   end subroutine
 
@@ -551,32 +551,32 @@ contains
       call ESMF_LogSetError(ESMF_RC_ARG_OUTOFRANGE, &
         msg="Cannot copy. Array is not a 2D or 3D array.", &
         line=__LINE__, file=FILENAME, rcToReturn=rc)
-      return  ! bail out
+      return
     endif
     if (localDeCount /= 1) then
       call ESMF_LogSetError(ESMF_RC_ARG_OUTOFRANGE, &
         msg="Cannot copy. Array local decomposition count must be 1.", &
         line=__LINE__, file=FILENAME, rcToReturn=rc)
-      return  ! bail out
+      return
     endif
     if (typekind /= ESMF_TYPEKIND_R4 .AND. typekind /= ESMF_TYPEKIND_R8) then
       call ESMF_LogSetError(ESMF_RC_ARG_OUTOFRANGE, &
         msg="Cannot copy. LIS array typekind does not match array typekind.", &
         line=__LINE__, file=FILENAME, rcToReturn=rc)
-      return  ! bail out
+      return
     endif
 
     if(rank==2) then
       if(typekind==ESMF_TYPEKIND_R4) then
         call ESMF_ArrayGet(array,farrayPtr=farray_R4,rc=rc)
-        if(ESMF_STDERRORCHECK(rc)) return ! bail out
+        if(ESMF_STDERRORCHECK(rc)) return
         call LIS_CopyToLIS(farray=farray_R4,farrayLIS=farrayLIS,nest=nest,rc=rc)
-        if(ESMF_STDERRORCHECK(rc)) return ! bail out
+        if(ESMF_STDERRORCHECK(rc)) return
       elseif(typekind==ESMF_TYPEKIND_R8) then
         call ESMF_ArrayGet(array,farrayPtr=farray_R8,rc=rc)
-        if(ESMF_STDERRORCHECK(rc)) return ! bail out
+        if(ESMF_STDERRORCHECK(rc)) return
         call LIS_CopyToLIS(farray=farray_R8,farrayLIS=farrayLIS,nest=nest,rc=rc)
-        if(ESMF_STDERRORCHECK(rc)) return ! bail out
+        if(ESMF_STDERRORCHECK(rc)) return
       else
         call ESMF_LogSetError(ESMF_RC_NOT_IMPL, &
           msg="Typekind copy not implemented.",rcToReturn=rc)
@@ -585,14 +585,14 @@ contains
     else
       if(typekind==ESMF_TYPEKIND_R4) then
         call ESMF_ArrayGet(array,farrayPtr=farray3D_R4,rc=rc)
-        if(ESMF_STDERRORCHECK(rc)) return ! bail out
+        if(ESMF_STDERRORCHECK(rc)) return
         call LIS_CopyToLIS(farray=farray3D_R4,farrayLIS=farrayLIS,nest=nest,rc=rc)
-        if(ESMF_STDERRORCHECK(rc)) return ! bail out
+        if(ESMF_STDERRORCHECK(rc)) return
       elseif(typekind==ESMF_TYPEKIND_R8) then
         call ESMF_ArrayGet(array,farrayPtr=farray3D_R8,rc=rc)
-        if(ESMF_STDERRORCHECK(rc)) return ! bail out
+        if(ESMF_STDERRORCHECK(rc)) return
         call LIS_CopyToLIS(farray=farray3D_R8,farrayLIS=farrayLIS,nest=nest,rc=rc)
-        if(ESMF_STDERRORCHECK(rc)) return ! bail out
+        if(ESMF_STDERRORCHECK(rc)) return
       else
         call ESMF_LogSetError(ESMF_RC_NOT_IMPL, &
           msg="Typekind copy not implemented.",rcToReturn=rc)
@@ -648,90 +648,90 @@ contains
       call ESMF_LogSetError(ESMF_RC_ARG_OUTOFRANGE, &
         msg="Cannot copy. Array is not a 2D or 3D array.", &
         line=__LINE__, file=FILENAME, rcToReturn=rc)
-      return  ! bail out
+      return
     endif
     if (rankLIS /= 1) then
       call ESMF_LogSetError(ESMF_RC_ARG_OUTOFRANGE, &
         msg="Cannot copy. LIS array is not a 1D tile array.", &
         line=__LINE__, file=FILENAME, rcToReturn=rc)
-      return  ! bail out
+      return
     endif
     if (localDeCount /= localDeCountLIS) then
       call ESMF_LogSetError(ESMF_RC_ARG_OUTOFRANGE, &
         msg="Cannot copy. LIS array does not match array decomposition.", &
         line=__LINE__, file=FILENAME, rcToReturn=rc)
-      return  ! bail out
+      return
     endif
     if (typekind /= typekindLIS) then
       call ESMF_LogSetError(ESMF_RC_ARG_OUTOFRANGE, &
         msg="Cannot copy. LIS array typekind does not match array typekind.", &
         line=__LINE__, file=FILENAME, rcToReturn=rc)
-      return  ! bail out
+      return
     endif
 
     if(typekind==ESMF_TYPEKIND_I4) then
       call ESMF_ArrayGet(arrayLIS,farrayPtr=farrayLIS_I4,rc=rc)
-      if(ESMF_STDERRORCHECK(rc)) return ! bail out
+      if(ESMF_STDERRORCHECK(rc)) return
       if(rank==2) then
         call ESMF_ArrayGet(array,farrayPtr=farray_I4,rc=rc)
-        if(ESMF_STDERRORCHECK(rc)) return ! bail out
+        if(ESMF_STDERRORCHECK(rc)) return
         call LIS_CopyFromLIS(farrayLIS=farrayLIS_I4,farray=farray_I4,nest=nest,&
           fillVal=fillVal,rc=rc)
-        if(ESMF_STDERRORCHECK(rc)) return ! bail out
+        if(ESMF_STDERRORCHECK(rc)) return
       else
         call ESMF_ArrayGet(array,farrayPtr=farray3D_I4,rc=rc)
-        if(ESMF_STDERRORCHECK(rc)) return ! bail out
+        if(ESMF_STDERRORCHECK(rc)) return
         call LIS_CopyFromLIS(farrayLIS=farrayLIS_I4,farray=farray3D_I4,nest=nest,&
           fillVal=fillVal,rc=rc)
-        if(ESMF_STDERRORCHECK(rc)) return ! bail out
+        if(ESMF_STDERRORCHECK(rc)) return
       endif
     elseif(typekind==ESMF_TYPEKIND_I8) then
       call ESMF_ArrayGet(arrayLIS,farrayPtr=farrayLIS_I8,rc=rc)
-      if(ESMF_STDERRORCHECK(rc)) return ! bail out
+      if(ESMF_STDERRORCHECK(rc)) return
       if(rank==2) then
         call ESMF_ArrayGet(array,farrayPtr=farray_I8,rc=rc)
-        if(ESMF_STDERRORCHECK(rc)) return ! bail out
+        if(ESMF_STDERRORCHECK(rc)) return
         call LIS_CopyFromLIS(farrayLIS=farrayLIS_I8,farray=farray_I8,nest=nest,&
           fillVal=fillVal,rc=rc)
-        if(ESMF_STDERRORCHECK(rc)) return ! bail out
+        if(ESMF_STDERRORCHECK(rc)) return
       else
         call ESMF_ArrayGet(array,farrayPtr=farray3D_I8,rc=rc)
-        if(ESMF_STDERRORCHECK(rc)) return ! bail out
+        if(ESMF_STDERRORCHECK(rc)) return
         call LIS_CopyFromLIS(farrayLIS=farrayLIS_I8,farray=farray3D_I8,nest=nest,&
           fillVal=fillVal,rc=rc)
-        if(ESMF_STDERRORCHECK(rc)) return ! bail out
+        if(ESMF_STDERRORCHECK(rc)) return
       endif
     elseif(typekind==ESMF_TYPEKIND_R4) then
       call ESMF_ArrayGet(arrayLIS,farrayPtr=farrayLIS_R4,rc=rc)
-      if(ESMF_STDERRORCHECK(rc)) return ! bail out
+      if(ESMF_STDERRORCHECK(rc)) return
       if(rank==2) then
         call ESMF_ArrayGet(array,farrayPtr=farray_R4,rc=rc)
-        if(ESMF_STDERRORCHECK(rc)) return ! bail out
+        if(ESMF_STDERRORCHECK(rc)) return
         call LIS_CopyFromLIS(farrayLIS=farrayLIS_R4,farray=farray_R4,nest=nest,&
           fillVal=fillVal,rc=rc)
-        if(ESMF_STDERRORCHECK(rc)) return ! bail out
+        if(ESMF_STDERRORCHECK(rc)) return
       else
         call ESMF_ArrayGet(array,farrayPtr=farray3D_R4,rc=rc)
-        if(ESMF_STDERRORCHECK(rc)) return ! bail out
+        if(ESMF_STDERRORCHECK(rc)) return
         call LIS_CopyFromLIS(farrayLIS=farrayLIS_R4,farray=farray3D_R4,nest=nest,&
           fillVal=fillVal,rc=rc)
-        if(ESMF_STDERRORCHECK(rc)) return ! bail out
+        if(ESMF_STDERRORCHECK(rc)) return
       endif
     elseif(typekind==ESMF_TYPEKIND_R8) then
       call ESMF_ArrayGet(arrayLIS,farrayPtr=farrayLIS_R8,rc=rc)
-      if(ESMF_STDERRORCHECK(rc)) return ! bail out
+      if(ESMF_STDERRORCHECK(rc)) return
       if (rank==2) then
         call ESMF_ArrayGet(array,farrayPtr=farray_R8,rc=rc)
-        if(ESMF_STDERRORCHECK(rc)) return ! bail out
+        if(ESMF_STDERRORCHECK(rc)) return
         call LIS_CopyFromLIS(farrayLIS=farrayLIS_R8,farray=farray_R8,nest=nest,&
           fillVal=fillVal,rc=rc)
-        if(ESMF_STDERRORCHECK(rc)) return ! bail out
+        if(ESMF_STDERRORCHECK(rc)) return
       else
         call ESMF_ArrayGet(array,farrayPtr=farray3D_R8,rc=rc)
-        if(ESMF_STDERRORCHECK(rc)) return ! bail out
+        if(ESMF_STDERRORCHECK(rc)) return
         call LIS_CopyFromLIS(farrayLIS=farrayLIS_R8,farray=farray3D_R8,nest=nest,&
           fillVal=fillVal,rc=rc)
-        if(ESMF_STDERRORCHECK(rc)) return ! bail out
+        if(ESMF_STDERRORCHECK(rc)) return
       endif
     else
       call ESMF_LogSetError(ESMF_RC_NOT_IMPL, &
@@ -775,34 +775,34 @@ contains
       call ESMF_LogSetError(ESMF_RC_ARG_OUTOFRANGE, &
         msg="Cannot copy. Array is not a 2D or 3D array.", &
         line=__LINE__, file=FILENAME, rcToReturn=rc)
-      return  ! bail out
+      return
     endif
     if (localDeCount /= 1) then
       call ESMF_LogSetError(ESMF_RC_ARG_OUTOFRANGE, &
         msg="Local array decomposition count must be 1.", &
         line=__LINE__, file=FILENAME, rcToReturn=rc)
-      return  ! bail out
+      return
     endif
     if (typekind /= ESMF_TYPEKIND_R4 .AND. typekind /= ESMF_TYPEKIND_R8) then
       call ESMF_LogSetError(ESMF_RC_ARG_OUTOFRANGE, &
         msg="Cannot copy. Array typekind does not match array typekind.", &
         line=__LINE__, file=FILENAME, rcToReturn=rc)
-      return  ! bail out
+      return
     endif
 
     if(rank==2) then
       if(typekind==ESMF_TYPEKIND_R4) then
         call ESMF_ArrayGet(array,farrayPtr=farray_R4,rc=rc)
-        if(ESMF_STDERRORCHECK(rc)) return ! bail out
+        if(ESMF_STDERRORCHECK(rc)) return
         call LIS_CopyFromLIS(farrayLIS=farrayLIS,farray=farray_R4,nest=nest,&
           fillVal=fillVal,rc=rc)
-        if(ESMF_STDERRORCHECK(rc)) return ! bail out
+        if(ESMF_STDERRORCHECK(rc)) return
       elseif(typekind==ESMF_TYPEKIND_R8) then
         call ESMF_ArrayGet(array,farrayPtr=farray_R8,rc=rc)
-        if(ESMF_STDERRORCHECK(rc)) return ! bail out
+        if(ESMF_STDERRORCHECK(rc)) return
         call LIS_CopyFromLIS(farrayLIS=farrayLIS,farray=farray_R8,nest=nest,&
           fillVal=fillVal,rc=rc)
-        if(ESMF_STDERRORCHECK(rc)) return ! bail out
+        if(ESMF_STDERRORCHECK(rc)) return
       else
         call ESMF_LogSetError(ESMF_RC_NOT_IMPL, &
           msg="Typekind copy not implemented.",rcToReturn=rc)
@@ -811,16 +811,16 @@ contains
     else
       if(typekind==ESMF_TYPEKIND_R4) then
         call ESMF_ArrayGet(array,farrayPtr=farray3D_R4,rc=rc)
-        if(ESMF_STDERRORCHECK(rc)) return ! bail out
+        if(ESMF_STDERRORCHECK(rc)) return
         call LIS_CopyFromLIS(farrayLIS=farrayLIS,farray=farray3D_R4,nest=nest,&
           fillVal=fillVal,rc=rc)
-        if(ESMF_STDERRORCHECK(rc)) return ! bail out
+        if(ESMF_STDERRORCHECK(rc)) return
       elseif(typekind==ESMF_TYPEKIND_R8) then
         call ESMF_ArrayGet(array,farrayPtr=farray3D_R8,rc=rc)
-        if(ESMF_STDERRORCHECK(rc)) return ! bail out
+        if(ESMF_STDERRORCHECK(rc)) return
         call LIS_CopyFromLIS(farrayLIS=farrayLIS,farray=farray3D_R8,nest=nest,&
           fillVal=fillVal,rc=rc)
-        if(ESMF_STDERRORCHECK(rc)) return ! bail out
+        if(ESMF_STDERRORCHECK(rc)) return
       else
         call ESMF_LogSetError(ESMF_RC_NOT_IMPL, &
           msg="Typekind copy not implemented.",rcToReturn=rc)
@@ -1324,7 +1324,7 @@ contains
           call ESMF_LogSetError(ESMF_RC_ARG_BAD, &
             msg="Cannot directly hookup to NoahMP36 "//trim(stdName), &
             line=__LINE__, file=FILENAME, rcToReturn=rc)
-          return  ! bail ou
+          return
       end select
     elseif ((missing .eq. MISSINGVAL_IGNORE) .or. &
             (missing .eq. MISSINGVAL_FAIL)) then
@@ -1426,7 +1426,7 @@ contains
           call ESMF_LogSetError(ESMF_RC_ARG_BAD, &
             msg="Cannot directly hookup to NoahMP36 "//trim(stdName), &
             line=__LINE__, file=FILENAME, rcToReturn=rc)
-          return  ! bail ou
+          return
       end select
     else
       call ESMF_LogSetError(ESMF_RC_ARG_BAD, &
@@ -1574,7 +1574,7 @@ contains
           call ESMF_LogSetError(ESMF_RC_ARG_BAD, &
             msg="Cannot directly hookup to Noahmp401 "//trim(stdName), &
             line=__LINE__, file=FILENAME, rcToReturn=rc)
-          return  ! bail ou
+          return
       end select
     elseif ((missing .eq. MISSINGVAL_IGNORE) .or. &
             (missing .eq. MISSINGVAL_FAIL)) then
@@ -1676,7 +1676,7 @@ contains
           call ESMF_LogSetError(ESMF_RC_ARG_BAD, &
             msg="Cannot directly hookup to Noahmp401 "//trim(stdName), &
             line=__LINE__, file=FILENAME, rcToReturn=rc)
-          return  ! bail ou
+          return
       end select
     else
       call ESMF_LogSetError(ESMF_RC_ARG_BAD, &
@@ -2463,7 +2463,7 @@ contains
           call ESMF_LogSetError(ESMF_RC_ARG_BAD, &
             msg="Cannot directly hookup to NoahMP36 "//trim(stdName), &
             line=__LINE__, file=FILENAME, rcToReturn=rc)
-          return  ! bail ou
+          return
       end select
     elseif ((missing .eq. MISSINGVAL_IGNORE) .or. &
             (missing .eq. MISSINGVAL_FAIL)) then
@@ -2578,7 +2578,7 @@ contains
           call ESMF_LogSetError(ESMF_RC_ARG_BAD, &
             msg="Cannot directly hookup to NoahMP36 "//trim(stdName), &
             line=__LINE__, file=FILENAME, rcToReturn=rc)
-          return  ! bail ou
+          return
       end select
     else
       call ESMF_LogSetError(ESMF_RC_ARG_BAD, &
@@ -2740,7 +2740,7 @@ contains
           call ESMF_LogSetError(ESMF_RC_ARG_BAD, &
             msg="Cannot directly hookup to Noahmp401 "//trim(stdName), &
             line=__LINE__, file=FILENAME, rcToReturn=rc)
-          return  ! bail ou
+          return
       end select
     elseif ((missing .eq. MISSINGVAL_IGNORE) .or. &
             (missing .eq. MISSINGVAL_FAIL)) then
@@ -2856,7 +2856,7 @@ contains
           call ESMF_LogSetError(ESMF_RC_ARG_BAD, &
             msg="Cannot directly hookup to Noahmp401 "//trim(stdName), &
             line=__LINE__, file=FILENAME, rcToReturn=rc)
-          return  ! bail ou
+          return
       end select
     else
       call ESMF_LogSetError(ESMF_RC_ARG_BAD, &
