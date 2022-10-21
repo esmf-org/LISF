@@ -24,6 +24,7 @@
 #define T_EXIT(region)
 #endif
 
+!> @file LIS_NUOPC_Gluecode.F90 LIS NUOPC Gluecode interfaces
 module LIS_NUOPC_Gluecode
 !BOP
 !
