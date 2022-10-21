@@ -11,6 +11,7 @@
 #define MODNAME "lis_nuopc_datacopy"
 #include "LIS_NUOPC_Macros.h"
 
+!> @file LIS_NUOPC_DataCopy.F90 LIS NUOPC Cap data copy interfaces
 module LIS_NUOPC_DataCopy
 !BOP
 !
@@ -49,6 +50,7 @@ module LIS_NUOPC_DataCopy
 ! Interface definitions for copy from LIS 1D tiled data to 2D
 !-----------------------------------------------------------------------------
 
+!> @cond IGNORE_INTERFACES
   interface LIS_CopyToLIS
     module procedure LIS_FieldCopyToLisField
     module procedure LIS_FieldCopyToLisFarray
@@ -100,6 +102,7 @@ module LIS_NUOPC_DataCopy
     module procedure LIS_EnsFarrayR4CopyFromLisFarrayR4
     module procedure LIS_EnsFarrayR8CopyFromLisFarrayR8
   end interface
+!> @endcond
 
 !-----------------------------------------------------------------------------
 ! !LOCAL VARIABLES:
@@ -342,6 +345,7 @@ contains
 #undef METHOD
 #define METHOD "LIS_FieldCopyToNoah_3_3"
 
+!> @brief Copy ESMF field to Noah v3.3 LSM
   subroutine LIS_FieldCopyToNoah_3_3(field,stdName,nest,missing,rc)
 ! !ARGUMENTS:
     type(ESMF_Field),intent(in)             :: field

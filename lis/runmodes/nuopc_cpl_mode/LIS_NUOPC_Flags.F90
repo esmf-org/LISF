@@ -11,6 +11,7 @@
 #define MODNAME "lis_nuopc_flags"
 #include "LIS_NUOPC_Macros.h"
 
+!> @file LIS_NUOPC_Flags.F90 LIS NUOPC Cap configuration flags
 module LIS_NUOPC_Flags
 !BOP
 !
@@ -32,23 +33,25 @@ module LIS_NUOPC_Flags
 ! !FLAG TYPES AND VALUES
 !-----------------------------------------------------------------------------
 
+!> @cond IGNORE_TYPE_FLAGS
   type missingval_flag
     sequence
     private
       integer :: opt
   end type missingval_flag
 
-  type(missingval_flag), parameter ::        &
-    MISSINGVAL_ERROR  = missingval_flag(-1), &
-    MISSINGVAL_IGNORE = missingval_flag(0),  &
-    MISSINGVAL_FAIL   = missingval_flag(1),  &
-    MISSINGVAL_SKPCPY = missingval_flag(2)
-
   type field_init_flag
     sequence
     private
       integer :: opt
   end type field_init_flag
+!> @endcond
+
+  type(missingval_flag), parameter ::        &
+    MISSINGVAL_ERROR  = missingval_flag(-1), &
+    MISSINGVAL_IGNORE = missingval_flag(0),  &
+    MISSINGVAL_FAIL   = missingval_flag(1),  &
+    MISSINGVAL_SKPCPY = missingval_flag(2)
 
   type(field_init_flag), parameter ::       &
     FLD_INIT_ERROR   = field_init_flag(-1), &
@@ -79,6 +82,7 @@ module LIS_NUOPC_Flags
 ! !INTERFACE DEFINITIONS:
 !-----------------------------------------------------------------------------
 
+!> @cond IGNORE_INTERFACES
   interface operator (==)
     module procedure missingval_eq
     module procedure field_init_eq
@@ -90,6 +94,7 @@ module LIS_NUOPC_Flags
     module procedure field_init_toString
     module procedure field_init_frString
   end interface
+!> @endcond
 
   !-----------------------------------------------------------------------------
   contains
