@@ -1,9 +1,9 @@
 !-----------------------BEGIN NOTICE -- DO NOT EDIT-----------------------
 ! NASA Goddard Space Flight Center
 ! Land Information System Framework (LISF)
-! Version 7.4
+! Version 7.5
 !
-! Copyright (c) 2022 United States Government as represented by the
+! Copyright (c) 2024 United States Government as represented by the
 ! Administrator of the National Aeronautics and Space Administration.
 ! All Rights Reserved.
 !-------------------------END NOTICE -- DO NOT EDIT-----------------------
@@ -251,9 +251,18 @@ subroutine LIS_DAobs_plugin
     use NASASMAPsm_Mod,          only : NASASMAPsm_setup
 #endif
 
+#if ( defined DA_CDF_TRANSFER_NASA_SMAPSM )
+    use cdfTransfer_NASASMAPsm_Mod,         only : cdfTransfer_NASASMAPsm_setup
+#endif
+
 !YK
 #if ( defined DA_OBS_SMOS_NRT_NN )
     use SMOSNRTNNL2sm_Mod,       only : SMOSNRTNNL2sm_setup
+#endif
+
+!YK
+#if ( defined DA_OBS_SMAP_E_OPL_SM )
+    use SMAPEOPLsm_Mod,       only : SMAPEOPLsm_setup
 #endif
 
 #if ( defined DA_OBS_NASA_SMAPVOD )
@@ -266,6 +275,16 @@ subroutine LIS_DAobs_plugin
 #if ( defined DA_OBS_MCD15A2H_LAI )
     use MCD15A2HLAI_Mod,       only : MCD15A2Hlai_setup
 #endif
+
+!Y.Kwon
+#if ( defined DA_OBS_VIIRS_GVF )
+    use VIIRSgvf_Mod,       only : VIIRSgvf_setup
+#endif
+!Y.Kwon
+#if ( defined DA_OBS_CDFS_GVF )
+    use CDFSgvf_Mod,       only : CDFSgvf_setup
+#endif
+
 #if ( defined DA_OBS_NRT_SMAPSM )
     use SMAPNRTsm_Mod,           only : SMAPNRTsm_setup
 #endif
@@ -436,9 +455,18 @@ subroutine LIS_DAobs_plugin
     external read_NASASMAPsm, write_NASASMAPsmobs
 #endif
 
+#if ( defined DA_CDF_TRANSFER_NASA_SMAPSM )
+    external read_cdfTransfer_NASASMAPsm, write_cdfTransfer_NASASMAPsmobs
+#endif
+
 !YK
 #if ( defined DA_OBS_SMOS_NRT_NN )
     external read_SMOSNRTNNL2sm, write_SMOSNRTNNL2smobs
+#endif
+
+!YK
+#if ( defined DA_OBS_SMAP_E_OPL_SM)
+    external read_SMAPEOPLsm, write_SMAPEOPLsmobs
 #endif
 
 #if ( defined DA_OBS_NASA_SMAPVOD)
@@ -459,6 +487,15 @@ subroutine LIS_DAobs_plugin
 
 #if ( defined DA_OBS_MODISSPORT_LAI )
     external read_MODISsportLAI, write_MODISsportLAI
+#endif
+
+!Y.Kwon
+#if ( defined DA_OBS_VIIRS_GVF )
+    external read_VIIRSgvf, write_VIIRSgvfobs
+#endif
+!Y.Kwon
+#if ( defined DA_OBS_CDFS_GVF )
+    external read_CDFSgvf, write_CDFSgvfobs
 #endif
 
 #if ( defined DA_OBS_NRT_SMAPSM )
@@ -809,6 +846,16 @@ subroutine LIS_DAobs_plugin
         write_NASASMAPsmobs)
 #endif
 
+#if ( defined DA_CDF_TRANSFER_NASA_SMAPSM )
+   call registerdaobsclass(trim(LIS_CDFTRANSFERNASASMAPsmobsId),"LSM")
+   call registerdaobssetup(trim(LIS_CDFTRANSFERNASASMAPsmobsId)//char(0),&
+        cdfTransfer_NASASMAPsm_setup)
+   call registerreaddaobs(trim(LIS_CDFTRANSFERNASASMAPsmobsId)//char(0),&
+        read_cdfTransfer_NASASMAPsm)
+   call registerwritedaobs(trim(LIS_CDFTRANSFERNASASMAPsmobsId)//char(0),&
+        write_cdfTransfer_NASASMAPsmobs)
+#endif
+
 !YK
 #if ( defined DA_OBS_SMOS_NRT_NN )
    call registerdaobsclass(trim(LIS_SMOSNRTNNL2smobsId),"LSM")
@@ -818,6 +865,17 @@ subroutine LIS_DAobs_plugin
         read_SMOSNRTNNL2sm)
    call registerwritedaobs(trim(LIS_SMOSNRTNNL2smobsId)//char(0),&
         write_SMOSNRTNNL2smobs)
+#endif
+
+!YK
+#if ( defined DA_OBS_SMAP_E_OPL_SM )
+   call registerdaobsclass(trim(LIS_SMAPEOPLsmobsId),"LSM")
+   call registerdaobssetup(trim(LIS_SMAPEOPLsmobsId)//char(0),&
+        SMAPEOPLsm_setup)
+   call registerreaddaobs(trim(LIS_SMAPEOPLsmobsId)//char(0),&
+        read_SMAPEOPLsm)
+   call registerwritedaobs(trim(LIS_SMAPEOPLsmobsId)//char(0),&
+        write_SMAPEOPLsmobs)
 #endif
 
 #if ( defined DA_OBS_NASA_SMAPVOD )
@@ -848,6 +906,27 @@ subroutine LIS_DAobs_plugin
         read_MCD15A2Hlai)
    call registerwritedaobs(trim(LIS_MCD15A2HlaiobsId)//char(0),&
         write_MCD15A2Hlai)
+#endif
+
+!Y.Kwon
+#if ( defined DA_OBS_VIIRS_GVF )
+   call registerdaobsclass(trim(LIS_VIIRSgvfobsId),"LSM")
+   call registerdaobssetup(trim(LIS_VIIRSgvfobsId)//char(0),&
+        VIIRSgvf_setup)
+   call registerreaddaobs(trim(LIS_VIIRSgvfobsId)//char(0),&
+        read_VIIRSgvf)
+   call registerwritedaobs(trim(LIS_VIIRSgvfobsId)//char(0),&
+        write_VIIRSgvfobs)
+#endif
+!Y.Kwon
+#if ( defined DA_OBS_CDFS_GVF )
+   call registerdaobsclass(trim(LIS_CDFSgvfobsId),"LSM")
+   call registerdaobssetup(trim(LIS_CDFSgvfobsId)//char(0),&
+        CDFSgvf_setup)
+   call registerreaddaobs(trim(LIS_CDFSgvfobsId)//char(0),&
+        read_CDFSgvf)
+   call registerwritedaobs(trim(LIS_CDFSgvfobsId)//char(0),&
+        write_CDFSgvfobs)
 #endif
 
 #if ( defined DA_OBS_NRT_SMAPSM )

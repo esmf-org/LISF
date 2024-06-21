@@ -3,9 +3,9 @@
 #-----------------------BEGIN NOTICE -- DO NOT EDIT-----------------------
 # NASA Goddard Space Flight Center
 # Land Information System Framework (LISF)
-# Version 7.4
+# Version 7.5
 #
-# Copyright (c) 2022 United States Government as represented by the
+# Copyright (c) 2024 United States Government as represented by the
 # Administrator of the National Aeronautics and Space Administration.
 # All Rights Reserved.
 #-------------------------END NOTICE -- DO NOT EDIT-----------------------
@@ -18,12 +18,6 @@ Customizes config file for procOBA_NWP program.
 REVISION HISTORY:
 03 Nov 2020:  Eric Kemp.  Initial specification.
 """
-
-import configparser
-import datetime
-import os
-import subprocess
-import sys
 
 import autotune
 
@@ -38,4 +32,3 @@ if __name__ == "__main__":
 
     # Customize the procOBA_NWP run.
     AUTOMATOR.customize_procoba_nwp()
-

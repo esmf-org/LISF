@@ -1,9 +1,9 @@
 !-----------------------BEGIN NOTICE -- DO NOT EDIT-----------------------
 ! NASA Goddard Space Flight Center
 ! Land Information System Framework (LISF)
-! Version 7.4
+! Version 7.5
 !
-! Copyright (c) 2022 United States Government as represented by the
+! Copyright (c) 2024 United States Government as represented by the
 ! Administrator of the National Aeronautics and Space Administration.
 ! All Rights Reserved.
 !-------------------------END NOTICE -- DO NOT EDIT-----------------------
@@ -134,6 +134,10 @@ subroutine LIS_metforcing_plugin
 
 #if ( defined MF_MERRA2 )
    use merra2_forcingMod
+#endif
+
+#if ( defined MF_GEOS_IT )
+   use geosit_forcingMod
 #endif
 
 #if ( defined MF_ERA5 )
@@ -296,6 +300,18 @@ subroutine LIS_metforcing_plugin
    use gddp_forcingMod
 #endif   
 
+#if ( defined MF_GALWEM_FORECAST )
+   use galwem_forcingMod
+#endif
+
+#if ( defined MF_GALWEM_GE_FORECAST )
+   use galwemge_forcingMod
+#endif
+
+#if ( defined MF_MOGREPS_G_FORECAST )
+   use mogrepsg_forcingMod
+#endif
+
 #if ( defined MF_MET_TEMPLATE )
    external get_metForcTemplate
    external timeinterp_metForcTemplate
@@ -370,6 +386,13 @@ subroutine LIS_metforcing_plugin
    external timeinterp_merra2
    external finalize_merra2
    external reset_merra2
+#endif
+
+#if ( defined MF_GEOS_IT )
+   external get_geosit
+   external timeinterp_geosit
+   external finalize_geosit
+   external reset_geosit
 #endif
 
 #if ( defined MF_ERA5 )
@@ -633,7 +656,34 @@ subroutine LIS_metforcing_plugin
    external finalize_gddp
    external reset_gddp
 #endif
-   
+
+#if ( defined MF_GALWEM_FORECAST )
+   external get_galwem
+   external timeinterp_galwem
+   external finalize_galwem
+   external reset_galwem
+#endif
+ 
+#if ( defined MF_GALWEM_GE_FORECAST )
+   external get_galwemge
+   external timeinterp_galwemge
+   external finalize_galwemge
+   external reset_galwemge
+#endif
+
+#if ( defined MF_MOGREPS_G_FORECAST )
+   external get_mogrepsg
+   external timeinterp_mogrepsg
+   external finalize_mogrepsg
+   external reset_mogrepsg
+#endif
+
+   external :: registerinitmetforc
+   external :: registerretrievemetforc
+   external :: registertimeinterpmetforc
+   external :: registerfinalmetforc
+   external :: registerresetmetforc
+
 #if ( defined MF_MET_TEMPLATE )
 ! - Meteorological Forcing Template:
    call registerinitmetforc(trim(LIS_metForcTemplateId)//char(0), &
@@ -752,6 +802,16 @@ subroutine LIS_metforcing_plugin
                                   timeinterp_merra2)
    call registerresetmetforc(trim(LIS_merra2Id)//char(0),reset_merra2)
    call registerfinalmetforc(trim(LIS_merra2Id)//char(0),finalize_merra2)
+#endif
+
+#if ( defined MF_GEOS_IT )
+! - GEOS-IT Forcing:
+   call registerinitmetforc(trim(LIS_geositId)//char(0),init_geosit)
+   call registerretrievemetforc(trim(LIS_geositId)//char(0),get_geosit)
+   call registertimeinterpmetforc(trim(LIS_geositId)//char(0), &
+                                  timeinterp_geosit)
+   call registerresetmetforc(trim(LIS_geositId)//char(0),reset_geosit)
+   call registerfinalmetforc(trim(LIS_geositId)//char(0),finalize_geosit)
 #endif
 
 #if ( defined MF_ERA5)
@@ -1138,6 +1198,34 @@ subroutine LIS_metforcing_plugin
    call registerfinalmetforc(trim(LIS_gddpId)//char(0),finalize_gddp)
    call registerresetmetforc(trim(LIS_gddpId)//char(0),reset_gddp)
 #endif
+
+#if ( defined MF_GALWEM_FORECAST)
+   call registerinitmetforc(trim(LIS_galwemId)//char(0),init_galwem)
+   call registerretrievemetforc(trim(LIS_galwemId)//char(0),get_galwem)
+   call registertimeinterpmetforc(trim(LIS_galwemId)//char(0), &
+                                  timeinterp_galwem)
+   call registerfinalmetforc(trim(LIS_galwemId)//char(0),finalize_galwem)
+   call registerresetmetforc(trim(LIS_galwemId)//char(0),reset_galwem)
+#endif
+
+#if ( defined MF_GALWEM_GE_FORECAST)
+   call registerinitmetforc(trim(LIS_galwemgeId)//char(0),init_galwemge)
+   call registerretrievemetforc(trim(LIS_galwemgeId)//char(0),get_galwemge)
+   call registertimeinterpmetforc(trim(LIS_galwemgeId)//char(0), &
+                                  timeinterp_galwemge)
+   call registerfinalmetforc(trim(LIS_galwemgeId)//char(0),finalize_galwemge)
+   call registerresetmetforc(trim(LIS_galwemgeId)//char(0),reset_galwemge)
+#endif
+
+#if ( defined MF_MOGREPS_G_FORECAST)
+   call registerinitmetforc(trim(LIS_mogrepsgId)//char(0),init_mogrepsg)
+   call registerretrievemetforc(trim(LIS_mogrepsgId)//char(0),get_mogrepsg)
+   call registertimeinterpmetforc(trim(LIS_mogrepsgId)//char(0), &
+                                  timeinterp_mogrepsg)
+   call registerfinalmetforc(trim(LIS_mogrepsgId)//char(0),finalize_mogrepsg)
+   call registerresetmetforc(trim(LIS_mogrepsgId)//char(0),reset_mogrepsg)
+#endif
+
 end subroutine LIS_metforcing_plugin
 
 end module LIS_metforcing_pluginMod

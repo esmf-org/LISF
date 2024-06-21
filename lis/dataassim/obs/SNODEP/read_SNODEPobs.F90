@@ -1,9 +1,9 @@
 !-----------------------BEGIN NOTICE -- DO NOT EDIT-----------------------
 ! NASA Goddard Space Flight Center
 ! Land Information System Framework (LISF)
-! Version 7.4
+! Version 7.5
 !
-! Copyright (c) 2022 United States Government as represented by the
+! Copyright (c) 2024 United States Government as represented by the
 ! Administrator of the National Aeronautics and Space Administration.
 ! All Rights Reserved.
 !-------------------------END NOTICE -- DO NOT EDIT-----------------------
@@ -96,6 +96,8 @@ subroutine read_SNODEPobs(n, k, OBS_State,OBS_Pert_State)
 
   file_exists1 = .false.
   file_exists2 = .false.
+  name_nh = ''
+  name_sh = ''
 
   alarmCheck = LIS_isAlarmRinging(LIS_rc, "SNODEP read alarm")    
 

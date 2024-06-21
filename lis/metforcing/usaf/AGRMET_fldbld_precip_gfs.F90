@@ -1,9 +1,9 @@
 !-----------------------BEGIN NOTICE -- DO NOT EDIT-----------------------
 ! NASA Goddard Space Flight Center
 ! Land Information System Framework (LISF)
-! Version 7.4
+! Version 7.5
 !
-! Copyright (c) 2022 United States Government as represented by the
+! Copyright (c) 2024 United States Government as represented by the
 ! Administrator of the National Aeronautics and Space Administration.
 ! All Rights Reserved.
 !-------------------------END NOTICE -- DO NOT EDIT-----------------------
@@ -137,7 +137,7 @@ subroutine AGRMET_fldbld_precip_gfs(n,findex,julhr,fc_hr,gfsdata)
   integer                 :: julhr
   integer                 :: nunit, nunit2
   integer                 :: ksec2       ( 10 )
-  character*100           :: message     ( 20 )
+  character*255           :: message     ( 20 )
   integer                 :: iginfo      ( 40 )
   real                    :: ginfo       ( 40 )
   real                    :: gridres
@@ -587,7 +587,7 @@ subroutine AGRMET_fldbld_read_precip_gfs( fg_filename, ifguess, jfguess,&
 !
 !EOP
   character*9                   :: cstat
-  character*100                 :: message     ( 20 )
+  character*255                 :: message     ( 20 )
   integer                       :: count_prec
   integer                       :: file_age
   integer                       :: i
@@ -635,7 +635,7 @@ subroutine AGRMET_fldbld_read_precip_gfs( fg_filename, ifguess, jfguess,&
      allocate ( dum1d   (ifguess*jfguess) )
      count_prec = 0
 
-     write(LIS_logunit,*)'[MSG] Reading first guess precip ', trim(fg_filename)
+     write(LIS_logunit,*)'[INFO] Reading first guess precip ', trim(fg_filename)
 
      call grib_count_in_file(ftn,nvars,ierr)
      call LIS_verify(ierr, 'error in grib_count_in_file in AGRMET_fldbld_read')

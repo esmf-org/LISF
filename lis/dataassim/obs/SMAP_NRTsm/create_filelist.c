@@ -1,9 +1,9 @@
 //-----------------------BEGIN NOTICE -- DO NOT EDIT-----------------------
 // NASA Goddard Space Flight Center
 // Land Information System Framework (LISF)
-// Version 7.4
+// Version 7.5
 //
-// Copyright (c) 2022 United States Government as represented by the
+// Copyright (c) 2024 United States Government as represented by the
 // Administrator of the National Aeronautics and Space Administration.
 // All Rights Reserved.
 //-------------------------END NOTICE -- DO NOT EDIT-----------------------
@@ -57,7 +57,7 @@ int FTN(create_filelist) (const char *regexp,
     /* Use the POSIX glob function to assemble list of files matching the
        provided regular expression. */
     globbuf.gl_offs = 0;
-    ierr = glob(regexp, NULL, NULL, &globbuf);
+    ierr = glob(regexp, 0, NULL, &globbuf);
 
     if (ierr == GLOB_NOMATCH) {
 	/* No files were found by glob.  So just create an empty outfile. */

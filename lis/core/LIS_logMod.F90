@@ -1,9 +1,9 @@
 !-----------------------BEGIN NOTICE -- DO NOT EDIT-----------------------
 ! NASA Goddard Space Flight Center
 ! Land Information System Framework (LISF)
-! Version 7.4
+! Version 7.5
 !
-! Copyright (c) 2022 United States Government as represented by the
+! Copyright (c) 2024 United States Government as represented by the
 ! Administrator of the National Aeronautics and Space Administration.
 ! All Rights Reserved.
 !-------------------------END NOTICE -- DO NOT EDIT-----------------------
@@ -143,7 +143,7 @@ contains
 
     implicit none
     
-    character*100              :: abort_message(20)
+    character*255              :: abort_message(20)
     
 ! !DESCRIPTION:
 !
@@ -218,7 +218,7 @@ contains
 
 9000 write (6, 8000) iofunc, istat
       
-    call abort ()
+    call LIS_endrun
   
   end subroutine LIS_abort
 
@@ -270,7 +270,7 @@ contains
 !EOP
     character*3                   :: calert_number
     character*7                   :: iofunc
-    character*37                  :: message_file
+    character*255                  :: message_file
     integer                       :: i
     integer                       :: istat
     integer                       :: ftn
@@ -295,7 +295,7 @@ contains
     iofunc = 'opening'
     ftn = LIS_getNextUnitNumber()
     open (unit   = ftn, &
-         file   = message_file, &
+         file   = trim(message_file), &
          iostat = istat)
     
 !     ------------------------------------------------------------------
@@ -390,7 +390,7 @@ contains
 
     if ( ierr /= 0 ) then
        write(LIS_logunit,*) '[WARN] ****************WARNING*********************'
-       write(LIS_logunit,*) '[WARN] ',msg
+       write(LIS_logunit,*) '[WARN] ', trim(msg)
        write(LIS_logunit,*) '[WARN] ****************WARNING*********************'
     endif
 
@@ -474,7 +474,7 @@ contains
 #if (defined SPMD) 
     call mpi_abort (LIS_mpi_comm, 1, ierr)
 #else
-    call abort
+    error stop 1
 #endif   
   end subroutine LIS_endrun
   end module LIS_logMod

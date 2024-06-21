@@ -35,6 +35,7 @@
 | GLDAS                                  | On
 | GFS                                    | On
 | MERRA2                                 | On
+| GEOS-IT                                | On
 | ERA5                                   | On
 | CMAP                                   | On
 | CHIRPS2                                | On
@@ -69,6 +70,8 @@
 | Loobos                                 | On
 | MRMS                                   | On
 | GDDP                                   | On
+| GALWEM forecast                        | On
+| GALWEM-GE forecast                     | On
 |====
 
 .Parameters
@@ -112,6 +115,7 @@
 | NLDAS router   | On
 | HYMAP router   | Off
 | HYMAP2 router  | On
+| RAPID router   | Off
 |====
 
 .Irrigation
@@ -150,6 +154,7 @@
 | DA OBS ANSA_SNWD        | On
 | DA OBS GCOMW_AMSR2L3SND | On
 | DA OBS SNODAS           | On
+| DA OBS WUSUCLA          | On
 | DA OBS SMOPS_ASCATsm    | On
 | DA OBS SMOPS_SMOSsm     | Off
 | DA OBS SMOPS_AMSR2sm    | Off
@@ -157,15 +162,19 @@
 | DA OBS SMOS_NESDIS      | On
 | DA OBS NASA_SMAPsm      | On
 | DA OBS SMOS_NRTNN_L2sm  | On
+| DA OBS SMAP_E_OPLsm     | On
 | DA OBS NASA_SMAPvod     | On
 | DA OBS ASO_SWE          | On
 | DA OBS MCD15A2H_LAI     | On
 | DA OBS GLASS_LAI        | On
+| DA OBS VIIRS_GVF        | On
+| DA OBS CDFS_GVF         | On
 | DA OBS GLASS_Albedo     | On
 | DA OBS MODISSPORT_LAI   | On
 | DA OBS NRT_SMAPsm       | On
 | DA OBS pildas           | On
 | DA OBS GRACE            | On
+| DA CDF TRANSFER NASA SMAPSM | On
 |====
 
 .Bias estimation
@@ -248,9 +257,10 @@
 | FASST               | Off
 | CLSM F2.5           | On
 | GeoWRSI.2           | On
-| LSM RDHM.3.5.6      | On
+| LSM RDHM.3.5.6      | Off
 | SUMMA.1.0           | Off
 | Crocus.8.1          | Off
+| SNOWMODEL           | Off
 | Flake.1.0           | Off
 | NoahMP-GL.3.9.1.1   | On
 | template glacier    | On

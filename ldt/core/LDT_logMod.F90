@@ -1,9 +1,9 @@
 !-----------------------BEGIN NOTICE -- DO NOT EDIT-----------------------
 ! NASA Goddard Space Flight Center
 ! Land Information System Framework (LISF)
-! Version 7.4
+! Version 7.5
 !
-! Copyright (c) 2022 United States Government as represented by the
+! Copyright (c) 2024 United States Government as represented by the
 ! Administrator of the National Aeronautics and Space Administration.
 ! All Rights Reserved.
 !-------------------------END NOTICE -- DO NOT EDIT-----------------------
@@ -186,7 +186,7 @@ contains
     
     call LDT_releaseUnitNumber(ftn)
     
-    call abort ()
+    call LDT_endrun
       
 !     ----------------------------------------------------------------
 !     format statements.
@@ -208,7 +208,7 @@ contains
 
 9000 write (6, 8000) iofunc, istat
       
-    call abort ()
+    call LDT_endrun
   
   end subroutine LDT_abort
 
@@ -464,7 +464,7 @@ contains
 !    call mpi_abort (MPI_COMM_WORLD, 1)         ! LDT
     call mpi_abort (MPI_COMM_WORLD, 1, ierr)   ! LIS-7
 #else
-    stop
+    error stop 1
 #endif   
    end subroutine LDT_endrun
 
