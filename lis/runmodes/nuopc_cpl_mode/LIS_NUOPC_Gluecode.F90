@@ -132,6 +132,7 @@ module LIS_NUOPC_Gluecode
   public :: LIS_NUOPC_DataInit   ! Copy data from internal state to export
   public :: LIS_ImportFieldsCopy ! Copy data from import to internal state
   public :: LIS_NUOPC_Run        ! run method for nuopc cpl mode
+  public :: LIS_NUOPC_Reset      ! reset DA window
   public :: LIS_NUOPC_Final      ! finalize method for nuopc cpl mode
   public :: LIS_GridCreate
   public :: LIS_TimestepGet
@@ -729,6 +730,42 @@ contains
       endif
 
     enddo ! end nest loop
+
+#ifdef DEBUG
+    call ESMF_LogWrite(MODNAME//": leaving "//METHOD, ESMF_LOGMSG_INFO)
+#endif
+
+  end subroutine
+
+  !-----------------------------------------------------------------------------
+  ! LIS_NUOPC_Reset: Reset LIS Model
+  !-----------------------------------------------------------------------------
+
+#undef METHOD
+#define METHOD "LIS_NUOPC_Reset"
+
+!BOP
+! !ROUTINE: LIS_NUOPC_Reset
+!
+! !INTERFACE:
+  subroutine LIS_NUOPC_Reset(rc)
+! !ARGUMENTS:
+    integer,intent(out)                    :: rc
+!
+! !DESCRIPTION:
+!  This routine resets the LIS model clock for DA purposes.
+!
+!EOP
+!
+! !LOCAL VARIABLES:
+
+    rc = ESMF_SUCCESS
+
+#ifdef DEBUG
+    call ESMF_LogWrite(MODNAME//": entered "//METHOD, ESMF_LOGMSG_INFO)
+#endif
+
+    call lisreset(trim(LIS_rc%runmode)//char(0))
 
 #ifdef DEBUG
     call ESMF_LogWrite(MODNAME//": leaving "//METHOD, ESMF_LOGMSG_INFO)

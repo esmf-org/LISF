@@ -53,6 +53,7 @@ module LIS_NUOPC
     type(ESMF_State),allocatable        :: NStateImp(:)
     type(ESMF_State),allocatable        :: NStateExp(:)
     integer                             :: mode
+    type(ESMF_Time)                     :: prevTime
   end type
 
 !> @cond IGNORE_WRAPPERS
@@ -1142,6 +1143,13 @@ module LIS_NUOPC
       modelTimestep, rc=rc)
     if (ESMF_STDERRORCHECK(rc)) return
 
+    call ESMF_TimeSet(is%wrap%prevTime, &
+      yy=0, mm=1, dd=1, &
+       h=0,  m=0,  s=0, &
+      calkindflag=ESMF_CALKIND_GREGORIAN, &
+      rc=rc)
+    if (ESMF_STDERRORCHECK(rc)) return
+
   end subroutine
 
   !-----------------------------------------------------------------------------
@@ -1290,6 +1298,22 @@ module LIS_NUOPC
     call ESMF_TimeGet(advEndTime, timeString=advEndTimeStr, rc=rc)
     if (ESMF_STDERRORCHECK(rc)) return
 
+    if (currTime .eq. is%wrap%prevTime) then
+      call ESMF_LogWrite(trim(cname)//": ModelAdvance currTime"// &
+        " repeated at "//trim(currTimeStr),ESMF_LOGMSG_WARNING)
+      if (ESMF_STDERRORCHECK(rc)) return
+    elseif (currTime .lt. is%wrap%prevTime) then
+      call ESMF_LogWrite(trim(cname)//": ModelAdvance currTime"// &
+        " reset to "//trim(currTimeStr), ESMF_LOGMSG_INFO)
+      if (ESMF_STDERRORCHECK(rc)) return
+      call LIS_NUOPC_Reset(rc=rc)
+      if (ESMF_STDERRORCHECK(rc)) return
+    else
+      call ESMF_LogWrite(trim(cname)//": ModelAdvance currTime"// &
+        " advanced to "//trim(currTimeStr), ESMF_LOGMSG_INFO)
+      if (ESMF_STDERRORCHECK(rc)) return
+    endif
+
     ! Write import files
     if (btest(diagnostic,16)) then
       do nIndex=1,is%wrap%nnests
@@ -1316,6 +1340,8 @@ module LIS_NUOPC
         if (ESMF_STDERRORCHECK(rc)) return
       enddo
     endif
+
+    is%wrap%prevTime = currTime
 
   end subroutine
 
