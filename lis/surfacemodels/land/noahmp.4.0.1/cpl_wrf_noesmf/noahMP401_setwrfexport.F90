@@ -120,6 +120,8 @@ subroutine noahMP401_setwrfexport(n)
   enddo
   call LIS_patch2tile(n,LIS_rc%lsm_index,LISWRF_export(n)%sh2o4_t,temp)
 #ifdef PARFLOW
+  call LIS_patch2tile(n,LIS_rc%lsm_index,LISWRF_export(n)%wa_t,&
+       NOAHMP401_struc(n)%noahmp401%wa)
   do i=1,LIS_rc%npatch(n,LIS_rc%lsm_index)
      temp(i) = NOAHMP401_struc(n)%noahmp401(i)%wtrflx(1)
   enddo

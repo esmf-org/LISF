@@ -68,6 +68,7 @@ module LISWRFexport_module
      real, allocatable :: soldrain(:,:)
 #endif
 #ifdef PARFLOW
+     real, allocatable :: wa(:,:)
      real, allocatable :: wtrflx1(:,:)
      real, allocatable :: wtrflx2(:,:)
      real, allocatable :: wtrflx3(:,:)
@@ -118,6 +119,7 @@ module LISWRFexport_module
      real, allocatable :: soldrain_t(:)
 #endif
 #ifdef PARFLOW
+     real, allocatable :: wa_t(:)
      real, allocatable :: wtrflx1_t(:)
      real, allocatable :: wtrflx2_t(:)
      real, allocatable :: wtrflx3_t(:)

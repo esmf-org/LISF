@@ -1554,9 +1554,9 @@ contains
           LIS_FieldList(fIndex)%adImport = .TRUE.
           LIS_FieldList(fIndex)%directConn = .TRUE.
           LIS_FieldList(fIndex)%sharedMem = .TRUE.
-!          LIS_FieldList(fIndex)%adExport=.FALSE.
-!          LIS_FieldList(fIndex)%hookup(nIndex)%exportArray=>LISWRF_export(nIndex)%%#NOTAVAILABLE#
-!          LIS_FieldList(fIndex)%hookup(nIndex)%exportArray_t=>LISWRF_export(nIndex)%%#NOTAVAILABLE#_t
+          LIS_FieldList(fIndex)%adExport=.TRUE.
+          LIS_FieldList(fIndex)%hookup(nIndex)%exportArray=>LISWRF_export(nIndex)%wa
+          LIS_FieldList(fIndex)%hookup(nIndex)%exportArray_t=>LISWRF_export(nIndex)%wa_t
 #endif
 #ifdef GSM_EXTLND
         case ('accum_plant_transpiration')              ! (77)

@@ -116,6 +116,7 @@ module LISWRFGridCompMod
          allocate(LISWRF_export(n)%soldrain(LIS_rc%lnc(n),LIS_rc%lnr(n)))
 #endif
 #ifdef PARFLOW
+         allocate(LISWRF_export(n)%wa(LIS_rc%lnc(n),LIS_rc%lnr(n)))
          allocate(LISWRF_export(n)%wtrflx1(LIS_rc%lnc(n),LIS_rc%lnr(n)))
          allocate(LISWRF_export(n)%wtrflx2(LIS_rc%lnc(n),LIS_rc%lnr(n)))
          allocate(LISWRF_export(n)%wtrflx3(LIS_rc%lnc(n),LIS_rc%lnr(n)))
@@ -167,6 +168,7 @@ module LISWRFGridCompMod
          allocate(LISWRF_export(n)%soldrain_t(LIS_rc%ntiles(n)))
 #endif
 #ifdef PARFLOW
+         allocate(LISWRF_export(n)%wa_t(LIS_rc%ntiles(n)))
          allocate(LISWRF_export(n)%wtrflx1_t(LIS_rc%ntiles(n)))
          allocate(LISWRF_export(n)%wtrflx2_t(LIS_rc%ntiles(n)))
          allocate(LISWRF_export(n)%wtrflx3_t(LIS_rc%ntiles(n)))
@@ -249,6 +251,7 @@ module LISWRFGridCompMod
          LISWRF_export(n)%soldrain = LIS_rc%udef
 #endif
 #ifdef PARFLOW
+         LISWRF_export(n)%wa = LIS_rc%udef
          LISWRF_export(n)%wtrflx1 = LIS_rc%udef
          LISWRF_export(n)%wtrflx2 = LIS_rc%udef
          LISWRF_export(n)%wtrflx3 = LIS_rc%udef
@@ -300,6 +303,7 @@ module LISWRFGridCompMod
          LISWRF_export(n)%soldrain_t = LIS_rc%udef
 #endif
 #ifdef PARFLOW
+         LISWRF_export(n)%wa_t = LIS_rc%udef
          LISWRF_export(n)%wtrflx1_t = LIS_rc%udef
          LISWRF_export(n)%wtrflx2_t = LIS_rc%udef
          LISWRF_export(n)%wtrflx3_t = LIS_rc%udef
